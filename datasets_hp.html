@@ -1,0 +1,324 @@
+<!doctype html>
+<html>
+<head>
+    <title>Network | Dynamic Data</title>
+
+    <script type="text/javascript" src="lib/vis.js"></script>
+	<script src="data/eventsData.js" ></script> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link href="lib/vis-network.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="lib/css/font-awesome.min.css"> 
+
+    <style type="text/css">
+        body {
+			color: #90A4AE;
+            font: 10pt arial;
+            background-color: #4B4B4B;
+        }	
+		
+        #mynetwork {
+		    height: 500px;
+        }
+        h4 {
+            margin-bottom:3px;
+        }
+	
+    </style>
+</head>
+
+<div id="mynetwork"></div>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		$("#mynetwork").height((parseInt($(document).height())));
+	});
+
+
+	var gDebug = true;
+	var gDelay = 100; // gDelay in ms to add new data points
+	var gKor   = 0;
+	var gEmployer = 0;
+	var gMaxId = 7;
+	var actEventDT;
+	var nodeIds = [];
+	var edgeIds = [];
+	var actNodes = [];
+	var actCTs = [];
+	
+    var /*shadowState, */nodes, edges, network;
+	var graph2d, dataset2d;
+	var snapshotDs = new vis.DataSet();
+
+	var startDate = new Date('2017-11-08T00:00:00');
+	var endDate = new Date('2017-11-08T24:00:00');
+	
+    createNetwork(); // gráf létrehozása
+//	myTrigger();
+	loadData();
+//	var gTimer = setInterval(myTrigger, gDelay);
+	
+
+	function loadData() {
+		myLog("loadData - START");	
+
+		for (i = 0; i < employersD.length; i++ ) {
+			
+			// eventsD végigolvasása, amíg stimmel a dátum
+//			for (i = gEvent; i < 13 && eventsD[i].eventDT == snapshotEventDT; i++) { 
+/*					upsertNode('un_' + eventsD[i].userName, eventsD[i].userName, 'dot', 'user', snapshotEventDT);
+					upsertNode('on_' + eventsD[i].objectName, eventsD[i].objectName, 'dot', 'object', snapshotEventDT);
+				
+					upsertEdge('un_' + eventsD[i].userName, 'on_' + eventsD[i].objectName);*/
+				gEmployer ++;
+				myLog('eventsD végigolvasása: ' + employersD[i].name);
+//			}
+		}
+	
+		// snapshotDs töltése*/
+//		snapshotDs.update([{id: snapshotsD[gKor].eventDT, nodes: actNodes.map(x=>x)}]);
+      network.fit();
+		
+		// gDelay szerinti várakoztatás két időpont között
+		gKor ++;
+/*		if (gKor >= snapshotsD.length){
+			clearInterval(gTimer);
+			myLog("gKor: STOP");	
+		}*/
+		
+	}
+
+/*	function unsetNodes() {
+		for (i = 0; i < actNodes.length; i++) { 
+			nodes.update([{id: actNodes[i], group: nodes.get(actNodes[i]).group.substring(3) }]);
+		}
+		actNodes.length = 0;
+	}
+	*/
+	function upsertNode(pId, pLabel, pShape, pGroup){
+		if (actNodes.indexOf( pId) < 0){
+			actNodes.push(pId);
+		};
+		
+		if (  nodeIds.indexOf( pId) >= 0) {
+			var actNode = nodes.get(pId);
+		    var pSize = actNode.size + 10;
+			if (actNode.group.substring(0, 3) == 'act'){
+				nodes.update([{id: pId, size: pSize, icon: {size: pSize}, group: actNode.group}]);
+			} else {
+				nodes.update([{id: pId, size: pSize, icon: {size: pSize}, group: 'act'+ actNode.group }]);
+			}
+			actNode.events.push(snapshotEventDT);
+		} else {
+			nodes.add({id: pId, /*label: pLabel, */title: pLabel, shape: pShape, size: 15, icon: {size: 15}, group: 'act'+pGroup, events: [snapshotEventDT]});
+			nodeIds.push(pId);
+		}
+	}
+
+	function upsertEdge(pFrom, pTo){
+		var lId = pFrom + ' -> ' + pTo;
+		if (  edgeIds.indexOf( lId) >= 0) {
+			edges.update([{id: lId, width: edges.get(pFrom + ' -> ' + pTo).width + 1 }]);
+		} else {
+			edges.add({id: lId, from: pFrom, to: pTo, width: 1});
+			edgeIds.push(lId);
+		}
+	
+	}
+
+
+
+    function createNetwork() {
+        nodes = new vis.DataSet();
+        edges = new vis.DataSet();
+
+        // create a network
+        var containerN = document.getElementById('mynetwork');
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {
+			height: '100%',
+			width: '100%',
+			interaction:{hover:true},
+			groups: {
+				userGroup: {
+					shape: 'icon',
+					color: 'gray',
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf0c0',
+						color: 'gray',
+						}
+				},
+				actuserGroup: {
+					shape: 'icon',
+					color: 'rgb(83,186,242)',
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf0c0',
+						color: 'rgb(83,186,242)'
+						}
+				},
+				objectOwner: {
+					shape: 'icon',
+					color: 'gray',
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf0e8',
+						color: 'gray'
+						}
+				},
+				actobjectOwner: {
+					shape: 'icon',
+					color: 'rgb(83,186,242)',
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf0e8',
+						color: 'rgb(83,186,242)'
+						}
+				},
+				user: {
+					shape: 'icon',
+					color: 'gray',
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf007',
+//						size: 224,
+						color: 'gray'
+						}
+				},
+				actuser: {
+					shape: 'icon',
+					color: 'rgb(101,200,192)', // vonal - Petrol light
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf007',
+						class: 'fa-circle',
+						color: 'rgb(33,128,118)' // csomópont - Petrol dark
+						}
+				},
+				object: {
+					shape: 'icon',
+					color: 'gray',
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf0ce',
+						color: 'gray'
+						}
+				},
+				actobject: {
+					shape: 'icon',
+					color: 'rgb(126,203,245)',	// vonal - Blue light
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf0ce',
+						color: 'rgb(49,124,179)' // csomópont - Light blue dark
+						}
+				},
+				
+			}
+		};
+        network = new vis.Network(containerN, data, options);
+    }
+	
+	// debug 
+	function myLog(logText){
+		if (gDebug == true) {
+			console.log(logText);	
+		}
+	}
+	
+    function changeOptions() {
+        shadowState = !shadowState;
+        network.setOptions({nodes:{shadow:shadowState},edges:{shadow:shadowState}});
+    }
+
+	function createGraph2d(){
+		var container2d = document.getElementById('mygraph2d');
+		dataset2d = new vis.DataSet([
+				{id: 'workStartDt', x: '2017-11-08T08:00:00', y: 2000, group: 'munkaido', size: 1},  // munkaidő vége
+				{id: 'workEndDt', x: '2017-11-08T16:30:00', y: 2000, group: 'munkaido', size: 1}  // munkaidő vége
+			]);
+
+		var groups2d = new vis.DataSet([
+			{	id: 'munkaido',
+				content: 'Munkaidő',
+				options: {
+					drawPoints: false,
+					shaded: {
+						orientation: 'bottom', // top, bottom
+						className: 'negative'
+					}
+				}
+			},
+			{	id: 'user',
+				content: 'User',
+				options: {
+					yAxisOrientation: 'right',
+					shaded: false
+				}
+			},
+			{	id: 'object',
+				content: 'Object',
+				options: {
+					shaded: false
+				}
+			}]);
+  
+		var options2d = {
+			start: startDate /*vis.moment().add(-30, 'seconds')*/,
+			end: endDate,
+	        moveable: false,
+			showMajorLabels: false,
+			legend: false, //{right: {position: 'top-left'}},
+			height: '150px',
+			dataAxis: {
+					visible: false,
+					showMinorLabels: false,					
+					left: {
+						range: {
+							min: 0, 
+							max: 300
+							}
+						},
+					right: {
+						range: {
+							min: 0, 
+							max: 60
+							}
+						},
+					},
+			drawPoints: {
+				style: 'circle' // square, circle
+				},
+			format: {
+				majorLabels: {
+					millisecond:'HH:mm:ss',
+					second:     'MM.DD HH:mm',
+					minute:     'MM.DD',
+					hour:       'YYYY.MM.DD',
+					weekday:    'YYYY.MM',
+					day:        'YYYY.MM',
+					month:      'YYYY',
+					year:       ''
+				}		
+			},
+			shaded: {
+				orientation: 'bottom' // top, bottom
+			}
+		};  
+		graph2d = new vis.Graph2d(container2d, dataset2d, groups2d, options2d);
+
+		graph2d.addCustomTime(startDate, 't1'); // mutató létrehozása, beállítása a kezdődátumra
+		actCTs.push('t1');
+	}
+	
+	
+</script>
+
+
+</body>
+</html>

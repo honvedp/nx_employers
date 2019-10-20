@@ -2,8 +2,10 @@
 <html>
 <head>
   <title>Network</title>
-  <script type="text/javascript" src="https://unpkg.com/vis-network@latest/dist/vis-network.min.js"></script>
-  <link href="https://unpkg.com/vis-network@latest/dist/vis-network.min.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="lib/vis.js"></script>
+  <link href="lib/vis-network.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="lib/css/font-awesome.min.css"> 
+
   <style type="text/css">
     #mynetwork {
       width: 600px;
@@ -11,16 +13,14 @@
       border: 1px solid lightgray;
     }
   </style>
-</head>
-<body>
-<div id="mynetwork"></div>
-<script type="text/javascript">
+  <script language="JavaScript">
+      function draw() {
   // create an array with nodes
   var nodes = new vis.DataSet([
-    {id: 1, label: 'Node 1'},
-    {id: 2, label: 'Node 2'},
-    {id: 3, label: 'Node 3'},
-    {id: 4, label: 'Node 4'},
+    {id: 1, label: 'Node 1', group: 'users'},
+    {id: 2, label: 'Node 2', group: 'usergroups'},
+    {id: 3, label: 'Node 3', group: 'usergroups'},
+    {id: 4, label: 'Node 4', group: 'usergroups'},
     {id: 5, label: 'Node 5'}
   ]);
 
@@ -39,8 +39,35 @@
     nodes: nodes,
     edges: edges
   };
-  var options = {};
+  var options = {
+      groups: {
+          usergroups: {
+            shape: 'icon',
+            icon: {
+              face: 'FontAwesome',
+              code: '\uf0c0',
+              size: 50,
+              color: '#57169a'
+            }
+          },
+          users: {
+            shape: 'icon',
+            icon: {
+              face: 'FontAwesome',
+              code: '\uf007',
+              size: 50,
+              color: '#aa00ff'
+            }
+          }
+        }
+
+		};
   var network = new vis.Network(container, data, options);
-</script>
+
+      }
+  </script>  
+</head>
+<body onload="draw()">
+<div id="mynetwork"></div>
 </body>
 </html>

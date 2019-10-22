@@ -1,13 +1,13 @@
 	var employersD = [
-						{id: 'en_1', name: 'Erdélyi Árpád', email: 'erdelyi.arpad@nextent.hu'},
-						{id: 'en_2', name: 'Honvéd Péter', email: 'honved.peter@nextent.hu'},
-						{id: 'en_3', name: 'Jenei Krisztián', email: 'jenei.krisztian@nextent.hu'},
-						{id: 'en_4', name: 'Kollerné Koska Veronika', email: 'koska.veronika@nextent.hu'},
-						{id: 'en_5', name: 'László József', email: 'laszlo.jozsef@nextent.hu'},
-						{id: 'en_6', name: 'Pernye László', email: 'pernye.laszlo@nextent.hu'},
-						{id: 'en_7', name: 'Radnai László', email: 'radnai.laszlo@nextent.hu'},
-						{id: 'en_8', name: 'Sipos Annamária', email: 'sipos.annamaria@nextent.hu'},
-						{id: 'en_9', name: 'Kovács Ákos', email: 'kovacs.akos@nextent.hu'}
+						{id: 'en_1', name: 'Erdélyi Árpád', email: 'erdelyi.arpad@nextent.hu', munkaviszonyFrom: '2010-10-01', munkaviszonyEnd: ''},
+						{id: 'en_2', name: 'Honvéd Péter', email: 'honved.peter@nextent.hu', munkaviszonyFrom: '2001-10-01', munkaviszonyEnd: ''},
+						{id: 'en_3', name: 'Jenei Krisztián', email: 'jenei.krisztian@nextent.hu', munkaviszonyFrom: '2016-10-01', munkaviszonyEnd: '2019-07-01'},
+						{id: 'en_4', name: 'Kollerné Koska Veronika', email: 'koska.veronika@nextent.hu', munkaviszonyFrom: '2014-10-01', munkaviszonyEnd: ''},
+						{id: 'en_5', name: 'László József', email: 'laszlo.jozsef@nextent.hu', munkaviszonyFrom: '2011-10-01', munkaviszonyEnd: ''},
+						{id: 'en_6', name: 'Pernye László', email: 'pernye.laszlo@nextent.hu', munkaviszonyFrom: '2011-10-01', munkaviszonyEnd: ''},
+						{id: 'en_7', name: 'Radnai László', email: 'radnai.laszlo@nextent.hu', munkaviszonyFrom: '2014-10-01', munkaviszonyEnd: ''},
+						{id: 'en_8', name: 'Sipos Annamária', email: 'sipos.annamaria@nextent.hu', munkaviszonyFrom: '2016-10-01', munkaviszonyEnd: ''},
+						{id: 'en_9', name: 'Kovács Ákos', email: 'kovacs.akos@nextent.hu', munkaviszonyFrom: '2010-10-01', munkaviszonyEnd: ''}
 						
 	]
 	var projektsD = [

@@ -7,6 +7,8 @@
 	<script src="data/eventsData.js" ></script> 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<link href="lib/vis-network.min.css" rel="stylesheet" type="text/css" />
+	<link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="lib/prettify/prettify.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="lib/css/font-awesome.min.css"> 
 
     <style type="text/css">
@@ -26,10 +28,24 @@
     </style>
 </head>
 
+http://ghusse.github.io/jQRangeSlider/documentation.html#quickStart
+http://ghusse.github.io/jQRangeSlider/technicalDemo.html
+<p>
+	<label for="amount">Date range:</label>
+	<input type="text" id="amount" style="border: 0; color: #f6931f; font-weight: bold;" size="100"/>
+  </p>
+   
+  <div id="slider-range"></div>
+
+  <div class="sliderContainer">
+	<div id="dateSliderExample"></div>
+  </div>
+
 <div id="mynetwork"></div>
 
 
 <script type="text/javascript">
+
 
 	$(document).ready(function(){
 		$("#mynetwork").height((parseInt($(document).height())));
@@ -38,7 +54,6 @@
 
 	var gDebug = true;
 	var gDelay = 100; // gDelay in ms to add new data points
-	var gKor   = 0;
 	var gEmployer = 0;
 	var gMaxId = 7;
 	var actEventDT;
@@ -71,6 +86,9 @@
 					upsertNode('on_' + eventsD[i].objectName, eventsD[i].objectName, 'dot', 'object', snapshotEventDT);
 				
 					upsertEdge('un_' + eventsD[i].userName, 'on_' + eventsD[i].objectName);*/
+
+					upsertNode(employersD[i].id, employersD[i].name, employersD[i].name + '</br>(' + employersD[i].email + ')', 'dot', 'user');
+
 				gEmployer ++;
 				myLog('eventsD végigolvasása: ' + employersD[i].name);
 //			}
@@ -80,12 +98,7 @@
 //		snapshotDs.update([{id: snapshotsD[gKor].eventDT, nodes: actNodes.map(x=>x)}]);
       network.fit();
 		
-		// gDelay szerinti várakoztatás két időpont között
-		gKor ++;
-/*		if (gKor >= snapshotsD.length){
-			clearInterval(gTimer);
-			myLog("gKor: STOP");	
-		}*/
+	  myLog("loadData - END");	
 		
 	}
 
@@ -96,7 +109,7 @@
 		actNodes.length = 0;
 	}
 	*/
-	function upsertNode(pId, pLabel, pShape, pGroup){
+	function upsertNode(pId, pLabel, pTitle, pShape, pGroup){
 		if (actNodes.indexOf( pId) < 0){
 			actNodes.push(pId);
 		};
@@ -109,9 +122,10 @@
 			} else {
 				nodes.update([{id: pId, size: pSize, icon: {size: pSize}, group: 'act'+ actNode.group }]);
 			}
-			actNode.events.push(snapshotEventDT);
+//			actNode.events.push(snapshotEventDT);
 		} else {
-			nodes.add({id: pId, /*label: pLabel, */title: pLabel, shape: pShape, size: 15, icon: {size: 15}, group: 'act'+pGroup, events: [snapshotEventDT]});
+			nodes.add({id: pId, /*label: pLabel, */title: pTitle, label: pLabel, shape: pShape, size: 15, icon: {size: 15}, group: 'act'+pGroup/*, events: [snapshotEventDT]*/});
+//			nodes.add({id: pId, /*label: pLabel, */title: pLabel, shape: pShape, size: 15, icon: {size: 15}, group: 'user'/*, events: [snapshotEventDT]*/});
 			nodeIds.push(pId);
 		}
 	}

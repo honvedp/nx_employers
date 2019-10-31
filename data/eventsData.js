@@ -12,17 +12,24 @@
 	]
 	var projektsD = [
 						{code: 'pn_MT_DWH_DEV_SUP_TM_2019', name: 'MT Adattárház fejlesztés és üzemeltetés T&M 2019', managerID: 'en_2'},
-						{code: 'pn_ERSTE_2019', name: 'ERSTE tesztelés 2019', managerID: 'en_9'},
+						{code: 'pn_ERSTE_2019', name: 'ERSTE tesztelés 2019', managerID: 'en_9'}
+	]
+
+	var allocationsD = [
+						{projectCodeFrom: 'pn_MT_DWH_DEV_SUP_TM_2019', userIdTo: 'en_1', fromDT: '2010-10-10T12:00:00Z', toDT: '2019-12-31T23:59:59Z'},
+						{projectCodeFrom: 'pn_MT_DWH_DEV_SUP_TM_2019', userIdTo: 'en_2', fromDT: '2010-10-10T12:00:00Z', toDT: '2019-12-31T23:59:59Z'},
+						{projectCodeFrom: 'pn_MT_DWH_DEV_SUP_TM_2019', userIdTo: 'en_3', fromDT: '2010-10-10T12:00:00Z', toDT: '2019-12-31T23:59:59Z'},
+						{projectCodeFrom: 'pn_MT_DWH_DEV_SUP_TM_2019', userIdTo: 'en_4', fromDT: '2010-10-10T12:00:00Z', toDT: '2019-12-31T23:59:59Z'},
+						{projectCodeFrom: 'pn_MT_DWH_DEV_SUP_TM_2019', userIdTo: 'en_5', fromDT: '2010-10-10T12:00:00Z', toDT: '2019-12-31T23:59:59Z'},
+						{projectCodeFrom: 'pn_MT_DWH_DEV_SUP_TM_2019', userIdTo: 'en_6', fromDT: '2010-10-10T12:00:00Z', toDT: '2019-12-31T23:59:59Z'},
+						{projectCodeFrom: 'pn_MT_DWH_DEV_SUP_TM_2019', userIdTo: 'en_7', fromDT: '2010-10-10T12:00:00Z', toDT: '2019-12-31T23:59:59Z'},
+						{projectCodeFrom: 'pn_MT_DWH_DEV_SUP_TM_2019', userIdTo: 'en_8', fromDT: '2010-10-10T12:00:00Z', toDT: '2019-12-31T23:59:59Z'},
+						{projectCodeFrom: 'pn_ERSTE_2019', userIdTo: 'en_9', fromDT: '2010-10-10T12:00:00Z', toDT: '2019-12-31T23:59:59Z'}
 	]
 
 	var conversationsD = [
-                        {id: 'ce_123',  eventDT: '2019-10-10T12:00:00', userIdFrom: 'en_1', userIdTo: 'en_2', messageType: 'email', messageID: '16b69682844ed1a5'},
-                        {id: 'ce_124',  eventDT: '2019-10-10T12:05:00', userIdFrom: 'en_2', userIdTo: 'en_1', messageType: 'email', messageID: '16b69682844ed1a5'},
-                        {id: 'ce_125',  eventDT: '2019-10-12T13:00:00', userIdFrom: 'en_8', userIdTo: 'en_4', messageType: 'email', messageID: '16b69682844ed1a5'},
-/*                        {eventDT: '2017-11-08T00:00:00', userGroup: '', userName: 'USER_12', objectOwner: '', objectName: 'OBJECT_20'},                                                                             
-                        {eventDT: '2017-11-08T00:00:00', userGroup: '', userName: 'USER_10', objectOwner: '', objectName: 'OBJECT_319'},                                                                            
-                        {eventDT: '2017-11-08T00:00:00', userGroup: '', userName: 'USER_17', objectOwner: '', objectName: 'OBJECT_4'},                                                                              
-                        {eventDT: '2017-11-08T23:50:00', userGroup: '', userName: 'USER_6', objectOwner: '', objectName: 'OBJECT_294'},                                                                             
-                        {eventDT: '2017-11-08T23:50:00', userGroup: '', userName: 'USER_41', objectOwner: '', objectName: 'OBJECT_236'},                                                                            
-*/						
-]					
+                        {eventDT: '2019-10-10T12:00:00Z', userIdFrom: 'en_1', userIdTo: 'en_2', messageType: 'email', messageID: '16b69682844ed1a5'},
+                        {eventDT: '2019-10-10T12:05:00Z', userIdFrom: 'en_2', userIdTo: 'en_1', messageType: 'email', messageID: '16b69682844ed1a5'},
+                        {eventDT: '2019-10-12T13:00:00Z', userIdFrom: 'en_8', userIdTo: 'en_4', messageType: 'email', messageID: '16b69682844ed1a5'},
+                        {eventDT: '2019-10-12T14:00:00Z', userIdFrom: 'en_8', userIdTo: 'en_9', messageType: 'email', messageID: '16b69682844ed1a5'},
+]

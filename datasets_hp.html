@@ -3,13 +3,14 @@
 <head>
     <title>Network | Dynamic Data</title>
 
-    <script type="text/javascript" src="lib/vis.js"></script>
+<!--    <script type="text/javascript" src="lib/vis.js"></script> -->
 	<script src="data/eventsData.js" ></script> 
 	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
     <script src="lib/jQDateRangeSlider-min.js"></script>
+    <script src="./lib/vis-network.min.js" type="text/javascript"></script>
 	
-	<link rel="stylesheet" href="lib/vis-network.min.css" type="text/css" />
+	<link rel="stylesheet" href="./lib/vis-network.min.css" type="text/css" />
     <link rel="stylesheet" href="lib/css/font-awesome.min.css"> 
     <link rel="stylesheet" href="lib/css/iThing.css" type="text/css" />
 	
@@ -54,10 +55,6 @@
     
 
 
-
-
-
-
 	var gDebug = true;
 	var gEmployer = 0;
 	var actEventDT;
@@ -66,10 +63,12 @@
 	var actNodes = [];
 	
     var /*shadowState, */nodes, edges, network;
-	var snapshotDs = new vis.DataSet();
+//	var snapshotDs = new vis.DataSet();
+            edges = new vis.DataSet();
+	
 
-	var startDate = new Date('2017-11-08T00:00:00');
-	var endDate = new Date('2017-11-08T24:00:00');
+	var startDate = new Date('2017-11-08T00:00:00Z');
+	var endDate = new Date('2017-11-08T24:00:00Z');
 	
     createNetwork(); // gráf létrehozása
 	loadData();
@@ -91,6 +90,36 @@
 
 				gEmployer ++;
 				myLog('eventsD végigolvasása: ' + employersD[i].name);
+//			}
+		}
+		
+		for (i = 0; i < projektsD.length; i++ ) {
+			// projektsD végigolvasása, amíg stimmel a dátum
+//			for (i = gEvent; i < 13 && eventsD[i].eventDT == snapshotEventDT; i++) { 
+
+					upsertNode(projektsD[i].code, projektsD[i].code, projektsD[i].name, 'dot', 'project');
+					upsertEdge(projektsD[i].code, projektsD[i].managerID);
+
+				gEmployer ++;
+				myLog('projektsD végigolvasása: ' + projektsD[i].code);
+//			}
+		}
+		for (i = 0; i < allocationsD.length; i++ ) {
+			// allocationsD végigolvasása, amíg stimmel a dátum
+//			for (i = gEvent; i < 13 && eventsD[i].eventDT == snapshotEventDT; i++) { 
+
+					upsertEdge(allocationsD[i].projectCodeFrom, allocationsD[i].userIdTo);
+
+				myLog('allocationsD végigolvasása: ' + allocationsD[i].projectCodeFrom + ' -> ' + allocationsD[i].userIdTo);
+//			}
+		}		
+		for (i = 0; i < conversationsD.length; i++ ) {
+			// conversationsD végigolvasása, amíg stimmel a dátum
+//			for (i = gEvent; i < 13 && eventsD[i].eventDT == snapshotEventDT; i++) { 
+
+					upsertEdge(conversationsD[i].userIdFrom, conversationsD[i].userIdTo);
+
+				myLog('conversationsD végigolvasása: ' + conversationsD[i].userIdFrom + ' -> ' + conversationsD[i].userIdTo);
 //			}
 		}
 	
@@ -210,6 +239,24 @@
 						code: '\uf007',
 						class: 'fa-circle',
 						color: 'rgb(33,128,118)' // csomópont - Petrol dark
+						}
+				},
+				project: {
+					shape: 'icon',
+					color: 'gray',
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf15c',
+						color: 'gray'
+						}
+				},
+				actproject: {
+					shape: 'icon',
+					color: 'rgb(126,203,245)',	// vonal - Blue light
+					icon: {
+						face: 'FontAwesome',
+						code: '\uf15c',
+						color: 'rgb(49,124,179)' // csomópont - Light blue dark
 						}
 				},
 				object: {

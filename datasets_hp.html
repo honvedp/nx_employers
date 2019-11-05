@@ -12,7 +12,6 @@
 	<script src="data/eventsData.js" ></script> 
 
 	<script src="lib/jquery-1.10.2.min.js"></script>
-<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	
@@ -144,7 +143,7 @@
 		for (i = 0; i < conversationsD.length; i++ ) {
 			eventDT = new Date(conversationsD[i].eventDT);
 			if (eventDT >=  fromDT && eventDT <= toDT) {
-				upsertEdge(conversationsD[i].userIdFrom, conversationsD[i].userIdTo);
+				upsertEdge(conversationsD[i].userIdFrom, conversationsD[i].userIdTo, conversationsD[i].eventDT);
 				eventDT = new Date(conversationsD[i].eventDT);
 			}
 		}
@@ -169,7 +168,7 @@
 		
 		if (  nodeIds.indexOf( pId) >= 0) {
 			var actNode = nodes.get(pId);
-		    var pSize = actNode.size + 10;
+		    var pSize = actNode.size + 1;
 //			if (actNode.group.substring(0, 3) == 'act'){
 			nodes.update([{id: pId, size: pSize, icon: {size: pSize}, group: actNode.group}]);
 /*			} else {
@@ -183,7 +182,7 @@
 		}
 	}
 
-	function upsertEdge(pFrom, pTo){
+	function upsertEdge(pFrom, pTo, pText){
 		var lId = pFrom + ' -> ' + pTo;
 
 		if (  (nodeIds.indexOf( pFrom) >= 0) && (nodeIds.indexOf( pTo) >= 0) ) {
@@ -195,11 +194,16 @@
 			myLog("nodeIds.indexOf( "+ pTo +"): " + nodeIds.indexOf( pTo));	*/
 
 			if (actNodeFrom.id.substring(0, 3) == "en_" && actNodeTo.id.substring(0, 3) == "en_") {
-				if (actNodeFrom.treeData.indexOf(actNodeTo.title) == -1 ) {
-					actNodeFrom.treeData.push({text: actNodeTo.label});
+				var actFromInd = actNodeFrom.treeData.indexOf(actNodeTo.title);
+
+
+				if (actFromInd == -1 ) {
+					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [{text: pText}]});
+				} else {
+					actNodeFrom.treeData[actFromInd].nodes.push({text: pText});
 				}
 				if (actNodeTo.treeData.indexOf(actNodeFrom.title) == -1) {
-					actNodeTo.treeData.push({text: actNodeFrom.label});
+					actNodeTo.treeData.push({text: actNodeFrom.label, nodes: [{text: pText}]});
 				}
 			}
 		}

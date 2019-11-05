@@ -1,7 +1,7 @@
 	var employersD = [
-						{id: 'en_1', name: 'Erdélyi Árpád', email: 'erdelyi.arpad@nextent.hu', munkaviszonyFrom: '2010-10-01', munkaviszonyTo: null/*, treeData: [{text: "Parent 1"}]*/},
-						{id: 'en_3', name: 'Jenei Krisztián', email: 'jenei.krisztian@nextent.hu', munkaviszonyFrom: '2016-10-01', munkaviszonyTo: '2019-07-01'/*, treeData: [{text: "Parent 2"}]*/},
-						{id: 'en_4', name: 'Kollerné Koska Veronika', email: 'koska.veronika@nextent.hu', munkaviszonyFrom: '2014-10-01', munkaviszonyTo: null/*, treeData: [{text: "Parent 3"}]*/},
+						{id: 'en_1', name: 'Erdélyi Árpád', email: 'erdelyi.arpad@nextent.hu', munkaviszonyFrom: '2010-10-01', munkaviszonyTo: null},
+						{id: 'en_3', name: 'Jenei Krisztián', email: 'jenei.krisztian@nextent.hu', munkaviszonyFrom: '2016-10-01', munkaviszonyTo: '2019-07-01'},
+						{id: 'en_4', name: 'Kollerné Koska Veronika', email: 'koska.veronika@nextent.hu', munkaviszonyFrom: '2014-10-01', munkaviszonyTo: null},
 						{id: 'en_5', name: 'László József', email: 'laszlo.jozsef@nextent.hu', munkaviszonyFrom: '2011-10-01', munkaviszonyTo: null},
 						{id: 'en_6', name: 'Pernye László', email: 'pernye.laszlo@nextent.hu', munkaviszonyFrom: '2011-10-01', munkaviszonyTo: null},
 						{id: 'en_7', name: 'Radnai László', email: 'radnai.laszlo@nextent.hu', munkaviszonyFrom: '2014-10-01', munkaviszonyTo: null},
@@ -24,9 +24,10 @@
 
 	var conversationsD = [
                         {eventDT: '2019-06-10T12:00:00Z', userIdFrom: 'en_1', userIdTo: 'en_3', messageType: 'email', messageID: '16b69682844ed1a5'},
-                        {eventDT: '2019-08-10T12:05:00Z', userIdFrom: 'en_3', userIdTo: 'en_1', messageType: 'email', messageID: '16b69682844ed1a5'},
-                        {eventDT: '2019-09-12T13:00:00Z', userIdFrom: 'en_8', userIdTo: 'en_4', messageType: 'email', messageID: '16b69682844ed1a5'},
-                        {eventDT: '2019-10-12T14:00:00Z', userIdFrom: 'en_8', userIdTo: 'en_9', messageType: 'email', messageID: '16b69682844ed1a5'},
+                        {eventDT: '2019-08-10T12:05:00Z', userIdFrom: 'en_3', userIdTo: 'en_1', messageType: 'email', messageID: '16b69682844ed1a6'},
+                        {eventDT: '2019-09-12T13:00:00Z', userIdFrom: 'en_8', userIdTo: 'en_4', messageType: 'email', messageID: '16b69682844ed1a7'},
+                        {eventDT: '2019-09-12T13:05:00Z', userIdFrom: 'en_8', userIdTo: 'en_4', messageType: 'email', messageID: '16b69682844ed1a8'},
+                        {eventDT: '2019-10-12T14:00:00Z', userIdFrom: 'en_8', userIdTo: 'en_9', messageType: 'email', messageID: '16b69682844ed1a9'}
 ]
 
 var treeData = [

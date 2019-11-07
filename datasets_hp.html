@@ -127,7 +127,7 @@
 
 			if (munkaviszonyFrom <=  fromDT && munkaviszonyTo >= toDT) {
 				upsertNode(employersD[i].id, employersD[i].name, employersD[i].name + '</br>(' + employersD[i].email + ')', 'dot', 'user', employersD[i].treeData);
-				myLog('eventsD végigolvasása: ' + employersD[i].name);
+//				myLog('eventsD végigolvasása: ' + employersD[i].name);
 			}
 		}
 		
@@ -186,10 +186,12 @@
 		var lId = pFrom + ' -> ' + pTo;
 
 		if (  (nodeIds.indexOf( pFrom) >= 0) && (nodeIds.indexOf( pTo) >= 0) ) {
+			myLog("pFrom: " + pFrom);
+			myLog("pTo: " + pTo);			
 			var actNodeFrom = nodes.get(pFrom);
 			var actNodeTo = nodes.get(pTo);
-			myLog("actNodeFrom.id: " + actNodeFrom.id.substring(0, 3));
-			myLog("actNodeTo.id: " + actNodeTo.id.substring(0, 3));
+			myLog("actNodeFrom.id: " + actNodeFrom.id);
+			myLog("actNodeTo.id: " + actNodeTo.id);
 /*			myLog("nodeIds.indexOf( "+pFrom+"): " + nodeIds.indexOf( pFrom));	
 			myLog("nodeIds.indexOf( "+ pTo +"): " + nodeIds.indexOf( pTo));	*/
 

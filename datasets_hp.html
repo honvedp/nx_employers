@@ -134,7 +134,12 @@
 		for (i = 0; i < allocationsD.length; i++ ) {
 			allocationFrom = new Date(allocationsD[i].fromDT);
 			allocationTo = new Date(allocationsD[i].toDT);
-			if (allocationFrom <=  fromDT && allocationTo >= toDT) {
+//			if (allocationFrom <=  fromDT && allocationTo >= toDT) {
+			if ( (allocationFrom <= fromDT  && allocationTo >=  fromDT ) ||
+			     (allocationFrom >=  fromDT && allocationTo <= toDT ) ||
+			     (allocationFrom >=  fromDT && allocationTo >= toDT ) 
+				) 
+			{
 				upsertNode('pn_' + allocationsD[i].projectCode, allocationsD[i].projectCode, allocationsD[i].projectName, 'dot', 'project');
 				upsertEdge('pn_' + allocationsD[i].projectCode, allocationsD[i].userId);
 			}
@@ -145,6 +150,7 @@
 			if (eventDT >=  fromDT && eventDT <= toDT) {
 				upsertEdge(conversationsD[i].userIdFrom, conversationsD[i].userIdTo, conversationsD[i].eventDT);
 				eventDT = new Date(conversationsD[i].eventDT);
+
 			}
 		}
 	
@@ -182,31 +188,54 @@
 		}
 	}
 
+	function getTreeNode(treeData, pLabel, pText) {
+		for (i = 0; i < treeData.length; i++) {
+			myLog('     entrie: ' +  treeData[i].text);
+			if (treeData[i].text == pLabel) {
+				treeData[i].nodes.push({text: pText});
+				myLog('     entrie: Már van ilyen!');
+			}
+		}
+	}
+
 	function upsertEdge(pFrom, pTo, pText){
 		var lId = pFrom + ' -> ' + pTo;
 
 		if (  (nodeIds.indexOf( pFrom) >= 0) && (nodeIds.indexOf( pTo) >= 0) ) {
-			myLog("pFrom: " + pFrom);
-			myLog("pTo: " + pTo);			
 			var actNodeFrom = nodes.get(pFrom);
 			var actNodeTo = nodes.get(pTo);
-			myLog("actNodeFrom.id: " + actNodeFrom.id);
-			myLog("actNodeTo.id: " + actNodeTo.id);
-/*			myLog("nodeIds.indexOf( "+pFrom+"): " + nodeIds.indexOf( pFrom));	
-			myLog("nodeIds.indexOf( "+ pTo +"): " + nodeIds.indexOf( pTo));	*/
 
 			if (actNodeFrom.id.substring(0, 3) == "en_" && actNodeTo.id.substring(0, 3) == "en_") {
-				var actFromInd = actNodeFrom.treeData.indexOf(actNodeTo.title);
+				var actFromInd = actNodeFrom.treeData.indexOf(actNodeTo.label);
+				myLog('actNodeFrom.treeData.length: ' + actNodeFrom.treeData.length);
+				myLog('actNodeTo.title: ' + actNodeTo.label);
+				myLog('actFromInd: ' + actFromInd);
 
+
+/*				for (i = 0; i < actNodeFrom.treeData.length; i++) {
+					 myLog('     entrie: ' +  actNodeFrom.treeData[i].text);
+				}
+*/
+				getTreeNode(actNodeFrom.treeData, actNodeTo.label, pText);
+
+/*				var f = actNodeFrom.treeData.entries();
+				for (x of f) {
+					myLog('     entrie: ' + x.text);
+				}*/
 
 				if (actFromInd == -1 ) {
+//					actNodeFrom.treeData.push({text: actNodeTo.label});
+//					actNodeFrom.treeData = [{text: actNodeTo.label, nodes: [{text: pText}]}];
 					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [{text: pText}]});
-				} else {
+//					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [pText]});
+/*				} else {
 					actNodeFrom.treeData[actFromInd].nodes.push({text: pText});
+//					actNodeFrom.treeData[actFromInd].nodes.push(pText);*/
 				}
-				if (actNodeTo.treeData.indexOf(actNodeFrom.title) == -1) {
+/*				if (actNodeTo.treeData.indexOf(actNodeFrom.title) == -1) {
 					actNodeTo.treeData.push({text: actNodeFrom.label, nodes: [{text: pText}]});
-				}
+//					actNodeTo.treeData.push({text: actNodeFrom.label, nodes: [pText]});
+				}*/
 			}
 		}
 

@@ -188,12 +188,20 @@
 		}
 	}
 
-	function getTreeNode(treeData, pLabel, pText) {
-		for (i = 0; i < treeData.length; i++) {
-			myLog('     entrie: ' +  treeData[i].text);
-			if (treeData[i].text == pLabel) {
-				treeData[i].nodes.push({text: pText});
-				myLog('     entrie: Már van ilyen!');
+	function setTreeNode(treeData, pLabel, pText) {
+		var bFound = false;
+		var i = 0;
+		if (treeData.length == 0) {
+			treeData.push({text: pLabel, nodes: [{text: pText}]});
+		} else {
+			for (i = 0; i < treeData.length; i++) {
+				if (treeData[i].text == pLabel) {
+					treeData[i].nodes.push({text: pText});
+					bFound = true;
+				}
+			}
+			if (! bFound) {
+				treeData.push({text: pLabel, nodes: [{text: pText}]});
 			}
 		}
 	}
@@ -207,31 +215,31 @@
 
 			if (actNodeFrom.id.substring(0, 3) == "en_" && actNodeTo.id.substring(0, 3) == "en_") {
 				var actFromInd = actNodeFrom.treeData.indexOf(actNodeTo.label);
-				myLog('actNodeFrom.treeData.length: ' + actNodeFrom.treeData.length);
-				myLog('actNodeTo.title: ' + actNodeTo.label);
-				myLog('actFromInd: ' + actFromInd);
+//				myLog('actNodeFrom.treeData.length: ' + actNodeFrom.treeData.length);
+//				myLog('actNodeTo.label: ' + actNodeTo.label);
 
 
 /*				for (i = 0; i < actNodeFrom.treeData.length; i++) {
 					 myLog('     entrie: ' +  actNodeFrom.treeData[i].text);
 				}
 */
-				getTreeNode(actNodeFrom.treeData, actNodeTo.label, pText);
+				setTreeNode(actNodeFrom.treeData, actNodeTo.label, pText);
+				setTreeNode(actNodeTo.treeData, actNodeFrom.label, pText);
 
 /*				var f = actNodeFrom.treeData.entries();
 				for (x of f) {
 					myLog('     entrie: ' + x.text);
 				}*/
 
-				if (actFromInd == -1 ) {
+//				if (actFromInd == -1 ) {
 //					actNodeFrom.treeData.push({text: actNodeTo.label});
 //					actNodeFrom.treeData = [{text: actNodeTo.label, nodes: [{text: pText}]}];
-					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [{text: pText}]});
+//					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [{text: pText}]});
 //					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [pText]});
 /*				} else {
 					actNodeFrom.treeData[actFromInd].nodes.push({text: pText});
 //					actNodeFrom.treeData[actFromInd].nodes.push(pText);*/
-				}
+//				}
 /*				if (actNodeTo.treeData.indexOf(actNodeFrom.title) == -1) {
 					actNodeTo.treeData.push({text: actNodeFrom.label, nodes: [{text: pText}]});
 //					actNodeTo.treeData.push({text: actNodeFrom.label, nodes: [pText]});

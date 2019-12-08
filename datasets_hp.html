@@ -53,12 +53,43 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-2">
+		
+		<div>
+			
+			<div class="checkbox-inline">
+				<label><input id="chkProjekt" type="checkbox" checked="checked" value="">Projektek</label>
+			</div>
+			<div class="checkbox-inline">
+				<label><input id="chkAllocation" type="checkbox" value="">Allokálva</label>
+			</div>		
+
+		</div>
+
+		<div>
+
+			<div class="checkbox-inline">
+				<label><input id="chkEmail" type="checkbox" checked="checked" value="">E-mail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+			</div>
+			<div class="checkbox-inline">
+				<label><input id="chkSms" type="checkbox" checked="checked" value="">SMS</label>
+			</div>		
+		</div>
+
+		<div>
 			<div id="myTree" class="treeview"></div>
+
+		</div>
+
+			
+
 		</div>
 		<div class="col-sm-10" >
 			<div id="mynetwork"></div>
 		</div>
 	</div>
+
+	
+	
 </div>
 
 
@@ -78,7 +109,7 @@
 		console.log("Values just changed. min: " + data.values.min.toISOString().substring(0, 19) + " max: " + data.values.max.toISOString().substring(0, 19));
 		sliderMinValue = data.values.min;
 		sliderMaxValue = data.values.max;
-		loadData(sliderMinValue, sliderMaxValue, null, null);
+		loadData(sliderMinValue, sliderMaxValue, null, null, document.getElementById('chkProjekt').checked, document.getElementById('chkAllocation').checked);
 	});
 
 	var gDebug = true;
@@ -96,7 +127,7 @@
 
     createNetwork(); // gráf létrehozása
 	setDateRange();
-	loadData(sliderMinValue, sliderMaxValue, null, null);
+	loadData(sliderMinValue, sliderMaxValue, null, null, document.getElementById('chkProjekt').checked, document.getElementById('chkAllocation').checked);
 
 	$('#myTree').treeview({
     data: treeData
@@ -112,7 +143,7 @@
 		$("#dateSlider").dateRangeSlider("values", sliderMinValue, sliderMaxValue);
 	}
 
-	function loadData(fromDT, toDT, userID, projektID) {
+	function loadData(fromDT, toDT, userID, projektID, showProjects, allocated) {
 		myLog("loadData - START");	
 
 		nodes.clear();
@@ -131,20 +162,30 @@
 			}
 		}
 		
-		for (i = 0; i < allocationsD.length; i++ ) {
-			allocationFrom = new Date(allocationsD[i].fromDT);
-			allocationTo = new Date(allocationsD[i].toDT);
-//			if (allocationFrom <=  fromDT && allocationTo >= toDT) {
-			if ( (allocationFrom <= fromDT  && allocationTo >=  fromDT ) ||
-			     (allocationFrom >=  fromDT && allocationTo <= toDT ) ||
-			     (allocationFrom >=  fromDT && allocationTo >= toDT ) 
-				) 
-			{
-				upsertNode('pn_' + allocationsD[i].projectCode, allocationsD[i].projectCode, allocationsD[i].projectName, 'dot', 'project');
-				upsertEdge('pn_' + allocationsD[i].projectCode, allocationsD[i].userId);
-			}
-
-		}		
+		if (showProjects) {
+			for (i = 0; i < allocationsD.length; i++ ) {
+				bShow = true;
+				if (allocated && allocationsD[i].allocPercent == 0) {
+					bShow = false;
+				}	
+				
+				if (bShow) {
+					allocationFrom = new Date(allocationsD[i].fromDT);
+					allocationTo = new Date(allocationsD[i].toDT);
+		//			if (allocationFrom <=  fromDT && allocationTo >= toDT) {
+					if ( (allocationFrom <= fromDT  && allocationTo >=  fromDT ) ||
+						(allocationFrom >=  fromDT && allocationTo <= toDT ) ||
+						(allocationFrom >=  fromDT && allocationTo >= toDT ) 
+						) 
+					{
+						upsertNode('pn_' + allocationsD[i].projectCode, allocationsD[i].projectCode, allocationsD[i].projectName, 'dot', 'project');
+						upsertEdge('pn_' + allocationsD[i].projectCode, allocationsD[i].userId);
+					}
+				}
+			}		
+		}
+		
+		
 		for (i = 0; i < conversationsD.length; i++ ) {
 			eventDT = new Date(conversationsD[i].eventDT);
 			if (eventDT >=  fromDT && eventDT <= toDT) {
@@ -369,6 +410,20 @@
 		};
         network = new vis.Network(containerN, data, options);
     }
+	
+	$('#chkProjekt').change(function() {
+		if ($(this).prop('checked')) {
+			document.getElementById('chkAllocation').disabled = false;
+		} else {
+			document.getElementById('chkAllocation').disabled = true;
+		}
+		loadData(sliderMinValue, sliderMaxValue, null, null, document.getElementById('chkProjekt').checked, document.getElementById('chkAllocation').checked);
+		
+	})	
+	$('#chkAllocation').change(function() {
+		loadData(sliderMinValue, sliderMaxValue, null, null, document.getElementById('chkProjekt').checked, document.getElementById('chkAllocation').checked);
+		
+	})	
 	
     network.on("click", function (params) {
 		var actNodeId = params.nodes[0];

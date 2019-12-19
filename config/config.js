@@ -1,7 +1,5 @@
 				
-const url = {nodes: "http://adattarhaz.telekom.intra/meta/getNetworkNodes.php",
-			 edges: "http://adattarhaz.telekom.intra/meta/getNetworkEdges.php"
-			};				
+			
 			
 const layerColors = {source: {html: '#FFD329', rgba: 'rgba(255, 211, 41, 0.15)'}, 		// Másodlagos Yellow
 					 mirror: {html: '#FF9A1E', rgba: 'rgba(255, 154, 30, 0.15)'},		// Másodlagos Orange
@@ -17,11 +15,10 @@ const options = {
 			width: '100%',
 			autoResize: true,
 			interaction:{hover:true},	
-			layout: {
+/*			layout: {
 				randomSeed: 2,    // Optional; insert your value here
-//				improvedLayout: true
 				improvedLayout: false
-			},		
+			},		*/
 
 //			physics: {
 //				stabilization: true,
@@ -36,13 +33,13 @@ const options = {
 				selectionWidth:  function (width) {
 //				myLog("Selection:width: " + width);
 					return width;
-				},
-				length:	300
+				}/*,
+				length:	300*/
 //				smooth:{type:'cubicBezier'}
 			},
-			interaction: {
+/*			interaction: {
 				tooltipDelay: 200
-			},
+			},*/
 			groups: {
 				
 				

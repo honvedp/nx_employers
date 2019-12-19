@@ -147,28 +147,7 @@ $(document).ready(function(){
 $("#Teszt").click(function() {
 });
 */	
-network.on("hoverNode", function(params) {
-  $('#mynetwork').qtip({
-    content: 'Node with ID: ' + params.node,
-      show: {
-        event: event.type // original event
-      },
-      position: {
-        my: 'top left',
-        target: 'mouse',
-        adjust: {
-          x: 10, y: 10
-        }
-      }
-    });
-});
 
-network.on("blurNode", function(params) {
-  $('#mynetwork').qtip({
-    content: 'Node with ID: ' + params.node,
-    hide: true
-  });
-});
 
 	$('#show-layers').on('change',function(e, myName, myValue) {
 		var $input = $( this );

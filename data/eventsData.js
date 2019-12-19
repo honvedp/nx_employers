@@ -5,7 +5,9 @@ from  NEXTIME_DATA.NXT_EMPLOYEE emp,
 where deem.EMPLOYEE_ID = emp.EMPLOYEE_ID     
   and deem.detail_type_id = 135 -- Email cím
   and deem.valid_to is null
+
 select * from NEXTIME_DATA.nxt_employee_detail where detail_type_id = 135 and valid_to is null
+
 */
 
 var employersD = [

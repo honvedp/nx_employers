@@ -53,12 +53,45 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-2">
-			<div id="myTree" class="treeview"></div>
+			<div class="row">
+			<div class="col-sm-1">
+				<div class="checkbox">
+					<label><input id="chkProjekt" type="checkbox" checked="checked" value="">Projektek</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input id="chkAllocation" type="checkbox" value="">Allokálva</label>
+				</div>		
+
+			</div>			</div>
+			<div class="row">
+				<div>
+					<div id="myTree" class="treeview"></div>
+				</div>			
+			</div>
+		
+		
+		
+<!--
+			<div class="col-sm-1">
+				<div class="checkbox">
+					<label><input id="chkEmail" type="checkbox" checked="checked" value="">E-mail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+				</div>
+				<div class="checkbox">
+					<label><input id="chkSms" type="checkbox" checked="checked" value="">SMS</label>
+				</div>		
+			</div>	-->	
+<!-- -->
+		</div>
+
 		</div>
 		<div class="col-sm-10" >
 			<div id="mynetwork"></div>
 		</div>
 	</div>
+
+	
+	
 </div>
 
 
@@ -78,7 +111,7 @@
 		console.log("Values just changed. min: " + data.values.min.toISOString().substring(0, 19) + " max: " + data.values.max.toISOString().substring(0, 19));
 		sliderMinValue = data.values.min;
 		sliderMaxValue = data.values.max;
-		loadData(sliderMinValue, sliderMaxValue, null, null);
+		loadData(sliderMinValue, sliderMaxValue, null, null, document.getElementById('chkProjekt').checked, document.getElementById('chkAllocation').checked);
 	});
 
 	var gDebug = true;
@@ -96,7 +129,7 @@
 
     createNetwork(); // gráf létrehozása
 	setDateRange();
-	loadData(sliderMinValue, sliderMaxValue, null, null);
+	loadData(sliderMinValue, sliderMaxValue, null, null, document.getElementById('chkProjekt').checked, document.getElementById('chkAllocation').checked);
 
 	$('#myTree').treeview({
     data: treeData
@@ -112,7 +145,7 @@
 		$("#dateSlider").dateRangeSlider("values", sliderMinValue, sliderMaxValue);
 	}
 
-	function loadData(fromDT, toDT, userID, projektID) {
+	function loadData(fromDT, toDT, userID, projektID, showProjects, allocated) {
 		myLog("loadData - START");	
 
 		nodes.clear();
@@ -127,23 +160,40 @@
 
 			if (munkaviszonyFrom <=  fromDT && munkaviszonyTo >= toDT) {
 				upsertNode(employersD[i].id, employersD[i].name, employersD[i].name + '</br>(' + employersD[i].email + ')', 'dot', 'user', employersD[i].treeData);
+//				myLog('eventsD végigolvasása: ' + employersD[i].name);
 			}
 		}
 		
-		for (i = 0; i < allocationsD.length; i++ ) {
-			allocationFrom = new Date(allocationsD[i].fromDT);
-			allocationTo = new Date(allocationsD[i].toDT);
-			if (allocationFrom <=  fromDT && allocationTo >= toDT) {
-				upsertNode('pn_' + allocationsD[i].projectCode, allocationsD[i].projectCode, allocationsD[i].projectName, 'dot', 'project');
-				upsertEdge('pn_' + allocationsD[i].projectCode, allocationsD[i].userId);
-			}
-
-		}		
+		if (showProjects) {
+			for (i = 0; i < allocationsD.length; i++ ) {
+				bShow = true;
+				if (allocated && allocationsD[i].allocPercent == 0) {
+					bShow = false;
+				}	
+				
+				if (bShow) {
+					allocationFrom = new Date(allocationsD[i].fromDT);
+					allocationTo = new Date(allocationsD[i].toDT);
+		//			if (allocationFrom <=  fromDT && allocationTo >= toDT) {
+					if ( (allocationFrom <= fromDT  && allocationTo >=  fromDT ) ||
+						(allocationFrom >=  fromDT && allocationTo <= toDT ) ||
+						(allocationFrom >=  fromDT && allocationTo >= toDT ) 
+						) 
+					{
+						upsertNode('pn_' + allocationsD[i].projectCode, allocationsD[i].projectCode, allocationsD[i].projectName, 'dot', 'project');
+						upsertEdge('pn_' + allocationsD[i].projectCode, allocationsD[i].userId);
+					}
+				}
+			}		
+		}
+		
+		
 		for (i = 0; i < conversationsD.length; i++ ) {
 			eventDT = new Date(conversationsD[i].eventDT);
 			if (eventDT >=  fromDT && eventDT <= toDT) {
 				upsertEdge(conversationsD[i].userIdFrom, conversationsD[i].userIdTo, conversationsD[i].eventDT);
 				eventDT = new Date(conversationsD[i].eventDT);
+
 			}
 		}
 	
@@ -181,28 +231,61 @@
 		}
 	}
 
+	function setTreeNode(treeData, pLabel, pText) {
+		var bFound = false;
+		var i = 0;
+		if (treeData.length == 0) {
+			treeData.push({text: pLabel, nodes: [{text: pText}]});
+		} else {
+			for (i = 0; i < treeData.length; i++) {
+				if (treeData[i].text == pLabel) {
+					treeData[i].nodes.push({text: pText});
+					bFound = true;
+				}
+			}
+			if (! bFound) {
+				treeData.push({text: pLabel, nodes: [{text: pText}]});
+			}
+		}
+	}
+
 	function upsertEdge(pFrom, pTo, pText){
 		var lId = pFrom + ' -> ' + pTo;
 
 		if (  (nodeIds.indexOf( pFrom) >= 0) && (nodeIds.indexOf( pTo) >= 0) ) {
 			var actNodeFrom = nodes.get(pFrom);
 			var actNodeTo = nodes.get(pTo);
-/*			myLog("actNodeFrom.id: " + actNodeFrom.id.substring(0, 3));
-			myLog("actNodeTo.id: " + actNodeTo.id.substring(0, 3));*/
-/*			myLog("nodeIds.indexOf( "+pFrom+"): " + nodeIds.indexOf( pFrom));	
-			myLog("nodeIds.indexOf( "+ pTo +"): " + nodeIds.indexOf( pTo));	*/
 
 			if (actNodeFrom.id.substring(0, 3) == "en_" && actNodeTo.id.substring(0, 3) == "en_") {
 				var actFromInd = actNodeFrom.treeData.indexOf(actNodeTo.label);
-				myLog("actNodeFrom.treeData:" + actNodeFrom.treeData);
-				myLog("actNodeTo.title: " + actNodeTo.label + ", actFromInd: " + actFromInd);
-				if (actFromInd == -1 ) {
-					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [{text: pText}]});
-				} else {
-					actNodeFrom.treeData[actFromInd].nodes.push({text: pText});
+//				myLog('actNodeFrom.treeData.length: ' + actNodeFrom.treeData.length);
+//				myLog('actNodeTo.label: ' + actNodeTo.label);
+
+
+/*				for (i = 0; i < actNodeFrom.treeData.length; i++) {
+					 myLog('     entrie: ' +  actNodeFrom.treeData[i].text);
 				}
+*/
+				setTreeNode(actNodeFrom.treeData, actNodeTo.label, pText);
+				setTreeNode(actNodeTo.treeData, actNodeFrom.label, pText);
+
+/*				var f = actNodeFrom.treeData.entries();
+				for (x of f) {
+					myLog('     entrie: ' + x.text);
+				}*/
+
+//				if (actFromInd == -1 ) {
+//					actNodeFrom.treeData.push({text: actNodeTo.label});
+//					actNodeFrom.treeData = [{text: actNodeTo.label, nodes: [{text: pText}]}];
+//					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [{text: pText}]});
+//					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [pText]});
+/*				} else {
+					actNodeFrom.treeData[actFromInd].nodes.push({text: pText});
+//					actNodeFrom.treeData[actFromInd].nodes.push(pText);*/
+//				}
 /*				if (actNodeTo.treeData.indexOf(actNodeFrom.title) == -1) {
 					actNodeTo.treeData.push({text: actNodeFrom.label, nodes: [{text: pText}]});
+//					actNodeTo.treeData.push({text: actNodeFrom.label, nodes: [pText]});
 				}*/
 			}
 		}
@@ -329,6 +412,20 @@
 		};
         network = new vis.Network(containerN, data, options);
     }
+	
+	$('#chkProjekt').change(function() {
+		if ($(this).prop('checked')) {
+			document.getElementById('chkAllocation').disabled = false;
+		} else {
+			document.getElementById('chkAllocation').disabled = true;
+		}
+		loadData(sliderMinValue, sliderMaxValue, null, null, document.getElementById('chkProjekt').checked, document.getElementById('chkAllocation').checked);
+		
+	})	
+	$('#chkAllocation').change(function() {
+		loadData(sliderMinValue, sliderMaxValue, null, null, document.getElementById('chkProjekt').checked, document.getElementById('chkAllocation').checked);
+		
+	})	
 	
     network.on("click", function (params) {
 		var actNodeId = params.nodes[0];

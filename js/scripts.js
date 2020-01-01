@@ -4,7 +4,7 @@ $(document).ready(function(){
 	const gDebug = true;
 	const gNodeLimit = 150;
 
-	let bUnknown = true;
+/*	let bUnknown = true;
 	let bSolution = true;
 	let bProcess = true;
 	let bData = true;
@@ -12,25 +12,35 @@ $(document).ready(function(){
 	let bReport = true;
 	let bView = true;
 	let bSourcesystem = true;
-	let bIngestion = true;	
+	let bIngestion = true;	*/
 	
 	let network;
 //	let networkAll;
 //	let networkFiltered;
 
-	let filter = [];
+//	let filter = [];
+	let bProject = true;
+	let bAllocated = false;
+	let bCall = true;
+	let bEmail = true;
+	let bRank1 = true;
+	let bRank2 = true;
+	let bRank3 = true;
+	let bRank4 = true;
+	let bRank5 = true;
+	let edgeFilter = ['CALL', 'EMAIL', 'RANK-1', 'RANK-2', 'RANK-3', 'RANK-4', 'RANK-5'];
+
 	let layers = {};
 	
 	let actNode;
 	let selectedNode;
 	let pickedNode;
 	let onlyDataProcess = false;
-	let onlyEmployers = false;
+//	let onlyEmployers = false;
 	let nodeIds = [];
 	let edgeIds = [];
 	let nodeIdFilter = [];
 	let nodesDSall = new vis.DataSet();
-	let edgesDS = new vis.DataSet();
 	let nodesDSVfiltered = new vis.DataView(nodesDSall, {
 		filter: function (node) {
 			// Ha egy kiválsztott NODE kapcsolatai érdekesek csak (egy DATAFLOW)
@@ -46,32 +56,58 @@ $(document).ready(function(){
 				} else {
 					return (filter.indexOf(node.page_type) !== -1)
 				}
-				
-								   group: 'EMPLOYER', 
-				
-				
 			}*/
-			if (onlyEmployers) {
-				return (node.group !== 'PROJECT')
-			} else {
+			if (bProject) {
 				return (true)
+			} else {
+				return (node.group !== 'PROJECT')
 			}
-		},
-		fields: ['id', 'name', 'group', 'page_type', 'label', 'title', 'fixed', 'x', 'y']
+		}/*,
+		fields: ['id', 'name', 'group', 'page_type', 'label', 'title', 'fixed', 'x', 'y']*/
 	});
-	
+	let edgesDSall = new vis.DataSet();
+
+
+	let edgesDSVfiltered = new vis.DataView(edgesDSall, {
+		filter: function (edge) {
+
+			switch(edge.type){
+				case "CONVERSATION":
+					return (edge.width > 0);
+					break;
+				case "PROJECT":
+					if (bAllocated) {
+						return true;
+					} else {
+						return (edge.allocPercent > 0);
+					}
+					break;
+				default:
+					return true;
+			}
+
+
+/*			if (actEdge.type == 'CONVERSATION') {
+			} else {
+				return true;
+			}
+*/
+		}
+	});	
+
 	let data = {
 //        nodes: nodesDS,
         nodes: nodesDSVfiltered,
-        edges: edgesDS
+        edges: edgesDSVfiltered
     };
 	
     // create a network
+	$("#myemail").hide();
 	$("#mynetwork").height($(document).height()-95);
     let container = document.getElementById('mynetwork');
 	
 //	p paraméter lekérése	
-	$.urlParam = function (name) {
+/*	$.urlParam = function (name) {
 		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 		if (results == null) {
 			return -1;
@@ -80,23 +116,29 @@ $(document).ready(function(){
 	}
 
 	const oid = $.urlParam('oid'); 
-	
+*/	
 	
 //	INIT
 	// ha nincs oid (page_id) paraméter, akkor a fetch közben is muttatja, különbem csak ha betöltötte az adatokat
-	if (oid === -1) {
+/*	if (oid === -1) {
 		network = new vis.Network(container, data, options);
-	} else {
+	} else {*/
 		network = new vis.Network(container);
 		network.setOptions(options);
-	}
+//	}
 	
-	filterChnage();
+/*	edgesDSall.on('update', function (event, properties, senderId) {
+		console.log('event:', event, 'properties:', properties, 'senderId:', senderId);
+	});
+*/
+
+
+//	filterChnage();
 	getNodes();
-	constructLayers();
+//	constructLayers();
 
 	// load settings from localStorage
-	if (localStorage.getItem("settings-show-layers") !== null) {
+/*	if (localStorage.getItem("settings-show-layers") !== null) {
 		$('#show-layers').attr('checked', localStorage.getItem("settings-show-layers") === 'true');
 	}
 	if (localStorage.getItem("settings-show-labels") !== null) {
@@ -120,28 +162,132 @@ $(document).ready(function(){
 		onlyDataProcess = false;
 		nodesDSVfiltered.refresh();
 	}
-	
+	*/
 
 	$( "#nav-projects" ).click(function() {
-		if (onlyEmployers) {
+		if (bProject) {
 			$("#nav-projects-icon-filter").css('color', 'grey');
 		} else{
 			$("#nav-projects-icon-filter").css('color', '#007bff'); //#53BAF2
 		};
-		onlyEmployers = !onlyEmployers;
+		bProject = !bProject;
 		nodesDSVfiltered.refresh();
-
 	});	
+
+	$( "#nav-allocated" ).click(function() {
+		if (bAllocated) {
+			$("#nav-allocated-icon-filter").css('color', '#007bff'); //#53BAF2
+		} else{
+			$("#nav-allocated-icon-filter").css('color', 'grey');
+		};
+		bAllocated = !bAllocated;
+		edgesDSVfiltered.refresh();
+	});	
+
+	$( "#nav-phone" ).click(function() {
+		if (bCall) {
+			$("#nav-phone-icon-filter").css('color', 'grey');
+		} else{
+			$("#nav-phone-icon-filter").css('color', '#007bff'); //#53BAF2
+		};
+		bCall = !bCall;
+		filterChnage();
+	});	
+
+	$( "#nav-email" ).click(function() {
+		if (bEmail) {
+			$("#nav-email-icon-filter").css('color', 'grey');
+		} else{
+			$("#nav-email-icon-filter").css('color', '#007bff'); //#53BAF2
+		};
+		bEmail = !bEmail;
+		filterChnage();
+	});	
+
+	$( "#nav-rank-1" ).click(function() {
+		if (bRank1) {
+			$("#nav-rank-1-icon-filter").css('color', 'grey');
+		} else{
+			$("#nav-rank-1-icon-filter").css('color', '#660000'); //#53BAF2
+		};
+		bRank1 = !bRank1;
+		filterChnage();
+	});	
+
+	$( "#nav-rank-2" ).click(function() {
+		if (bRank2) {
+			$("#nav-rank-2-icon-filter").css('color', 'grey');
+		} else{
+			$("#nav-rank-2-icon-filter").css('color', '#ff6600'); //#53BAF2
+		};
+		bRank2 = !bRank2;
+		filterChnage();
+	});	
+
+	$( "#nav-rank-3" ).click(function() {
+		if (bRank3) {
+			$("#nav-rank-3-icon-filter").css('color', 'grey');
+		} else{
+			$("#nav-rank-3-icon-filter").css('color', '#ffcc00'); //#53BAF2
+		};
+		bRank3 = !bRank3;
+		filterChnage();
+	});	
+
+	$( "#nav-rank-4" ).click(function() {
+		if (bRank4) {
+			$("#nav-rank-4-icon-filter").css('color', 'grey');
+		} else{
+			$("#nav-rank-4-icon-filter").css('color', '#99ff33'); //#53BAF2
+		};
+		bRank4 = !bRank4;
+		filterChnage();
+	});	
+
+	$( "#nav-rank-5" ).click(function() {
+		if (bRank5) {
+			$("#nav-rank-5-icon-filter").css('color', 'grey');
+		} else{
+			$("#nav-rank-5-icon-filter").css('color', '#009900'); //#53BAF2
+		};
+		bRank5 = !bRank5;
+		filterChnage();
+	});	
+
+	function filterChnage(){
+		edgeFilter.length = 0;
+		if (bCall) { edgeFilter.push('CALL'); }
+		if (bEmail) { edgeFilter.push('EMAIL'); }
+		if (bRank1) { edgeFilter.push('RANK-1'); }
+		if (bRank2) { edgeFilter.push('RANK-2'); }
+		if (bRank3) { edgeFilter.push('RANK-3'); }
+		if (bRank4) { edgeFilter.push('RANK-4'); }
+		if (bRank5) { edgeFilter.push('RANK-5'); }
+
+		edgeIds.forEach(setEdgeProperies);
+		
+		if (edgeFilter.length > 0) {
+			clearObjectlist();
+			fillObjectlist();
+		}
+	}	
+
+
 	
-/*	
-	$('#Teszt').click(function(e){
-         e.preventDefault();
-         // your statements;
+	$('#test1').click(function(e){
+		myLog("test1 button is clicked");
+		document.getElementById("mailSubject").innerHTML = '&nbsp;subject text';
+
+		$("#mynetwork").hide();
+		$("#myemail").show();
+		
      });
-     $('#Teszt').bind("click",function(){
-		myLog("button is clicked");
+	$('#test2').click(function(e){
+		myLog("test2 button is clicked");
+		$("#mynetwork").show();
+		$("#myemail").hide();
      });
-*/
+
 
 /*
 $("#Teszt").click(function() {
@@ -149,7 +295,7 @@ $("#Teszt").click(function() {
 */	
 
 
-	$('#show-layers').on('change',function(e, myName, myValue) {
+/*	$('#show-layers').on('change',function(e, myName, myValue) {
 		var $input = $( this );
 		localStorage.setItem("settings-show-layers", $input[0].checked);
 		network.redraw();
@@ -165,7 +311,7 @@ $("#Teszt").click(function() {
 		network.setOptions(options);
 		
 	});		
-
+*/
 /*	$('#only-data-process').on('change',function(e, myName, myValue) {
 		var $input = $( this );
 		localStorage.setItem("settings-Employers", $input[0].checked);
@@ -175,6 +321,7 @@ $("#Teszt").click(function() {
 	});
 */
 	
+/*
 	$('#Teszt1').on('click',function(e, myName, myValue) {
 
 
@@ -208,11 +355,6 @@ $("#Teszt").click(function() {
 				
 				
 				
-/*				if (posY > 0) {
-					network.moveNode(key, posX, posY + 500);
-				} else {
-					network.moveNode(key, posX, posY - 500);
-				}*/
 //				actNode.y = -500;
 			}
 		}
@@ -226,15 +368,10 @@ $("#Teszt").click(function() {
 		
 //		$('#show-layers').attr('checked', false);
 
-	});	
+	});	*/
+/*
 	$('#Teszt2').on('click',function(e, myName, myValue) {
-/*		actNode = nodesDSall.get(7466);
-		actNode.fixed = true;		
-		actNode.y = -500; */
 //		network.moveNode(7466, -500, -500);
-/*		network.stabilize(100);
-		network.fit();		
-		*/
 //		nodesDSall.update(actNode);		
 
 		actNode = nodesDSall.get(7261);
@@ -247,7 +384,7 @@ $("#Teszt").click(function() {
 		
 	});	
 	
-
+*/
 	function releaseLayers(){
 		for (var property in layers) {
 			if (layers.hasOwnProperty(property)) {
@@ -266,6 +403,8 @@ $("#Teszt").click(function() {
 		}			
 	}
 	
+
+/*	
 	function setLayers() {
 		let layerCount = 0;
 		let actLayer = 0;
@@ -331,27 +470,50 @@ $("#Teszt").click(function() {
 			}
 		}
 	}	
+*/
 
-	
+/*
 	function constructLayers(){
 		layers = JSON.parse(JSON.stringify(initLayers));
 	};	
-	
+	*/
+
     network.on("click", function (params) {
 		if (params.nodes.length > 0) { // van kiválasztott NODE
 			actNode = nodesDSall.get( params.nodes)[0];
 			pickedNode = actNode;
 			
-			document.getElementById("pickedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; ">' + getIconByGroup(actNode, 'i') + '</div><div class="info"><a href=\"' + actNode.url + '" target="_blank" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" title="'+actNode.name+'">'+actNode.name+' DataFlow diagramja</a></div>';
-			document.getElementById("objectDetails").innerHTML = actNode.details;
+//			document.getElementById("pickedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; ">' + getIconByGroup(actNode, 'i') + '</div><div class="info"><a href=\"' + actNode.url + '" target="_blank" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" title="'+actNode.name+'">'+actNode.name+' DataFlow diagramja</a></div>';
+//			document.getElementById("objectDetails").innerHTML = actNode.details;
+			var lIcon = '';
+			switch(actNode.group) {
+				case "PROJECT":
+					lIcon = 'fa-file-text';
+					break;
+				case "EMPLOYER":
+					lIcon = 'fa-user';
+					break;
+				default:
+					lIcon = 'fa-circle-o';
+	//				rIcon = '<i' + pTag + ' id="nav-un-icon" class="fa fa-circle-o nav-icon"></' + pTag + '>';
+					break;
+			}
+	
+			document.getElementById("pickedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa ' + lIcon + ' nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >' + actNode.label + '</a></div>';
+			document.getElementById("selectedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa ' + lIcon + ' nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >' + actNode.label + '</a></div>';
+			
+			myLog('actNode.label: ' + actNode.label);
 		} else {
 			pickedNode = null;
 			document.getElementById("pickedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa fa-circle-o nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >Nincs kiválasztott elem</a></div>';
+			document.getElementById("selectedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa fa-circle-o nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >Nincs kiválasztott elem</a></div>';
 		}
 		clearObjectlist();
 		fillObjectlist();
     });
-	
+
+
+	/*
     network.on("doubleClick", function (params) {
 		nodeIdFilter.length = 0;
 		clearObjectlist();
@@ -398,9 +560,9 @@ $("#Teszt").click(function() {
 		network.fit();
 	
 	});
-		
+		*/
 	// háttérre rajzol
-	network.on("beforeDrawing", function (ctx) {
+	/*network.on("beforeDrawing", function (ctx) {
 		// kiválasztott node köré keret rajzolása
 		if (selectedNode ){
 			actPos = network.getPositions([selectedNode.id])[selectedNode.id];
@@ -414,7 +576,7 @@ $("#Teszt").click(function() {
 				ctx.strokeStyle = '#4b4b4b';
 				ctx.fillStyle = '#FFFFFF';
 //				ctx.arc(actX, actY, 100, 0, Math.PI * 2, true); // Outer circle
-				if (selectedNode.page_type === 'BD_SOLUTION' || selectedNode.page_type === 'BD_DATAINGESTION' /*|| selectedNode.page_type === 'BD_SOURCESYSTEM'˛*/) {
+				if (selectedNode.page_type === 'BD_SOLUTION' || selectedNode.page_type === 'BD_DATAINGESTION' ) {
 					ctx.fillRect(actX - 50, actY - 50, 100, 100);
 					ctx.rect(actX - 50, actY - 50, 100, 100);
 				} else {
@@ -436,7 +598,7 @@ $("#Teszt").click(function() {
 				ctx.lineWidth = 5;
 				ctx.strokeStyle = '#FFFFFF';
 //				ctx.arc(actX, actY, 100, 0, Math.PI * 2, true); // Outer circle
-				if (pickedNode.page_type === 'BD_SOLUTION' || pickedNode.page_type === 'BD_DATAINGESTION' /*|| pickedNode.page_type === 'BD_SOURCESYSTEM'˛*/) {
+				if (pickedNode.page_type === 'BD_SOLUTION' || pickedNode.page_type === 'BD_DATAINGESTION' ) {
 					ctx.rect(actX - 50, actY - 50, 100, 100);
 				} else {
 					ctx.rect(actX - 35, actY - 35, 70, 70);
@@ -463,8 +625,6 @@ $("#Teszt").click(function() {
 						for (j = 0; j < layers[property].nodes.length; j++) {
 							actNode = nodesDSall.get(layers[property].nodes[j].id);
 //							console.log('actNode: ', actNode);
-/*							console.log('   network.getPositions([actNode.id].x): ', network.getPositions([actNode.id])[actNode.id].x);
-							console.log('   network.getPositions([actNode.id].y): ', network.getPositions([actNode.id])[actNode.id].y);*/
 							
 							if (filteredIds.indexOf(actNode.id) > -1){
 								xPos = network.getPositions([actNode.id])[actNode.id].x;
@@ -518,7 +678,7 @@ $("#Teszt").click(function() {
 			}
 		}
 	});
-
+*/
 	
 /*    network.on("click", function (params) {
 		console.log("click.params: ", params);
@@ -564,7 +724,7 @@ network.on("blurNode", function(params) {
   });
 });	*/
 
-    network.on("dragStart", function (params) {
+/*    network.on("dragStart", function (params) {
 		if (params.nodes.length > 0) { // van kiválasztott NODE
 			const lNodeId = params.nodes;
 			actNode = nodesDSall.get(lNodeId)[0];
@@ -577,7 +737,9 @@ network.on("blurNode", function(params) {
 			$(".vis-tooltip").css("visibility", "hidden");
 		}
 	});	
-	
+*/
+
+/*
     network.on("dragEnd", function (params) {
 		if (params.nodes.length > 0) { // van kiválasztott NODE
 			const lNodeId = params.nodes;
@@ -618,7 +780,9 @@ network.on("blurNode", function(params) {
 			}
 		}
     });	
+*/
 
+/*
     function pickNode(p_nodeId) {
 						
 			nodeIdFilter.length = 0;
@@ -663,7 +827,9 @@ network.on("blurNode", function(params) {
 		network.stabilize(100);
 		network.fit();			
     };
-	
+	*/
+
+	/*
 	function collectChildConnections(p_actNode){
 		for (i in p_actNode.connections) {
 			if (p_actNode.connections[i].con_type == 'P') {
@@ -673,7 +839,9 @@ network.on("blurNode", function(params) {
 			}
 		}
 	}
-	
+	*/
+
+	/*
 	function collectIOConnections(p_actNode, p_conDirection, p_prevNodeId){
 //		myLog('p_actNode.id: ' + p_actNode.id + ', p_prevNodeId: ' + p_prevNodeId + ', p_conDirection: ' + p_conDirection);
 //		if (nodeIdFilter.indexOf(p_actNode.id) < 0 ){
@@ -712,12 +880,13 @@ network.on("blurNode", function(params) {
 					}
 				}
 			}		
-/*		} else {*/
 //			myLog('   NOK p_conDirection: ' + p_conDirection + ', ' + 'p_actNode.id: ' + p_actNode.id + ', p_actNode.connections[i].node.id: ' + p_actNode.connections[i].node.id);
 			//addWarning('Már van ilyen NODE!');
 //		}
 	}
+*/
 
+/*
 	// layer-be sorolás layer és / vagy page_type alapján
 	function node2Layers(pNode){
 				switch(pNode.layer) {
@@ -773,8 +942,9 @@ network.on("blurNode", function(params) {
 						break;
 				}		
 	}
+	*/
 	
-	
+	/*
 	// Obektum filter
 	$("#obejctFilter").on("keyup", function() {
 		const value = $(this).val().toLowerCase();
@@ -791,14 +961,16 @@ network.on("blurNode", function(params) {
 			$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
 		});
 	});	
-	
+	*/
+	/*
 	
 	// objektum választó
 	$( ".nav-obj-el" ).click(function() {
 //		myLog($(this).val());
 		myLog('Katt');
 	});		
-	
+	*/
+	/*
 	$( "#nav-solution" ).click(function() {
 		if (bSolution) {
 			$("#nav-solution-icon-filter").css('color', 'grey');
@@ -881,7 +1053,9 @@ network.on("blurNode", function(params) {
 		bIngestion = !bIngestion;
 		filterChnage();
 	});	
-	
+	*/
+
+	/*
 	function filterChnage(){
 		filter.length = 0;
 		if (bSolution) { filter.push('BD_SOLUTION'); }
@@ -900,7 +1074,7 @@ network.on("blurNode", function(params) {
 			clearObjectlist();
 			fillObjectlist();
 		}
-	}
+	}*/
 
     function fit(){
 		myLog('fit');
@@ -923,7 +1097,7 @@ network.on("blurNode", function(params) {
 			(employersD[i].munkaviszonyTo) ? munkaviszonyTo = new Date(employersD[i].munkaviszonyTo) : munkaviszonyTo = new Date();
 
 			if (munkaviszonyFrom <=  fromDT && munkaviszonyTo >= toDT) {
-				upsertNode(employersD[i].id, employersD[i].name, employersD[i].name + '</br>(' + employersD[i].email + ')', 'dot', 'user', employersD[i].treeData);
+				upsertNode(employersD[i].id, employersD[i].name, employersD[i].name + '</br>(' + employersD[i].email + ')', 'dot', 'user', employersD[i].messages);
 //				myLog('eventsD végigolvasása: ' + employersD[i].name);
 			}
 		}
@@ -998,7 +1172,7 @@ network.on("blurNode", function(params) {
 								   size: 15, 
 								   icon: {size: 15}, 
 								   group: 'EMPLOYER', 
-								   treeData: []
+								   conversations: []
 								   };
 								   
 						nodeIds.push(lId, 'EMPLOYER');
@@ -1021,7 +1195,7 @@ network.on("blurNode", function(params) {
 								   size: 15, 
 								   icon: {size: 15}, 
 								   group: 'PROJECT', 
-								   treeData: []
+								   conversations: []
 								   };
 //						actNode.title = '<div style="text-align: center; font: 15pt arial; font-weight: bold; padding-top: 15px; padding-right: 15px; padding-left: 15px;">' + getIconByGroup(actNode, 'p') + ' <big>&nbsp;&nbsp;' + pagesD[i].page_name + '</big></div>' + actNode.title;
 
@@ -1037,9 +1211,9 @@ network.on("blurNode", function(params) {
 						lId = fromNode.id + ' -> ' + toNode.id;
 
 						if ( edgeIds.indexOf( lId) >= 0) {
-							edgesDS.update([{id: lId, width: edgesDS.get(lId).width + 1 }]);
+							edgesDSall.update([{id: lId, width: edgesDSall.get(lId).width + 1 }]);
 						} else {
-							edgesDS.add({id: lId, from: fromNode.id, to: toNode.id, width: 1});
+							edgesDSall.add({id: lId, from: fromNode.id, to: toNode.id, type: 'PROJECT', width: 1, conversations: [], allocPercent: allocationsD[i].allocPercent});
 							edgeIds.push(lId);
 						}
 					}
@@ -1051,10 +1225,10 @@ network.on("blurNode", function(params) {
 					
 					fromNode = conversationsD[i].userIdFrom;
 					toNode = conversationsD[i].userIdTo;
-					conNode = fromNode + ' ' + conversationsD[i].messageType + ' ' + toNode;
+//					conNode = fromNode + ' ' + conversationsD[i].messageType + ' ' + toNode;
 
 					if (fromNode != null && toNode != null){
-						if (  nodeIds.indexOf( conNode ) < 0 ) {
+/*						if (  nodeIds.indexOf( conNode ) < 0 ) {
 							actNode = {	id: conNode, 
 										title: conversationsD[i].messageType, 
 										label: conversationsD[i].messageType, 
@@ -1062,7 +1236,7 @@ network.on("blurNode", function(params) {
 										size: 15, 
 										icon: {size: 15}, 
 										group: conversationsD[i].messageType, 
-										treeData: []
+										conversations: []
 										};
 //							actNode.title = '<div style="text-align: center; font: 15pt arial; font-weight: bold; padding-top: 15px; padding-right: 15px; padding-left: 15px;">' + getIconByGroup(actNode, 'p') + ' <big>&nbsp;&nbsp;' + pagesD[i].page_name + '</big></div>' + actNode.title;
 
@@ -1074,32 +1248,92 @@ network.on("blurNode", function(params) {
 						lId = fromNode + ' -> ' + conNode;
 						iEdge = edgeIds.indexOf( lId);
 						if ( iEdge >= 0) {
-							edgesDS.update([{id: lId, width: edgesDS.get(lId).width + 1}]);
+							edgesDSall.update([{id: lId, width: edgesDSall.get(lId).width + 1}]);
 						} else {
-							edgesDS.add({id: lId, from: fromNode, to: conNode, width: 1});
+							edgesDSall.add({id: lId, from: fromNode, to: conNode, width: 1});
 							edgeIds.push(lId);
 						}
 						
 						lId = conNode + ' -> ' + toNode;
 						iEdge = edgeIds.indexOf( lId);
 						if ( iEdge >= 0) {
-							edgesDS.update([{id: lId, width: edgesDS.get(lId).width + 1}]);
+							edgesDSall.update([{id: lId, width: edgesDSall.get(lId).width + 1}]);
 						} else {
-							edgesDS.add({id: lId, from: conNode, to: toNode, width: 1});
+							edgesDSall.add({id: lId, from: conNode, to: toNode, width: 1});
 							edgeIds.push(lId);
 						}						
-						
-						
+					*/	
+						lId = fromNode + ' -> ' + toNode;
+						iEdge = edgeIds.indexOf( lId);
+						if ( iEdge >= 0) {
+//							edgesDSall.update([{id: lId, count: edgesDSall.get(lId).count + 1, width: edgesDSall.get(lId).count + 1}]);
+							edgesDSall.get(lId).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID});
+
+
+//							edgesDSall.update([{id: lId, ranks.add(iRank)}]);
+						} else {
+							edgesDSall.add({id: lId, from: fromNode, to: toNode, type: 'CONVERSATION', count: 1, width: 1, arrows: 'to', color: { color: '#660000'}, conversations: [{rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID}] });
+							edgeIds.push(lId);
+						}
+						eventDT = new Date(conversationsD[i].eventDT);
+						hint = nodesDSall.get(fromNode).label + ' -> ' + nodesDSall.get(toNode).label;
+						nodesDSall.get(fromNode).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(toNode).label, hint: hint});
+						nodesDSall.get(toNode).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(fromNode).label, hint: hint});
+//						myLog('Add conversation');
 					}
 				}
 				
 				network.setData(data);
-
-//				getEdges();
+				edgeIds.forEach(setEdgeProperies);
 	}
 
+	function setEdgeProperies(value, index, array) {
+		actEdge = edgesDSall.get(value)
+		if (actEdge.type == 'CONVERSATION') {
+
+//			myLog('index: ' + index + ', value: ' + value + ', iType: ' + actEdge.type + ', conversations: ' + actEdge.conversations.length);
+
+			var filteredConversations = actEdge.conversations.filter(conversatonTypeFilter);
+//			myLog('filteredConversations.length: ' + filteredConversations.length);
+			AVGRank = Math.round(filteredConversations.reduce(getSumRank, 0) / filteredConversations.length);
+
+			edgesDSall.update([{id: value, width: filteredConversations.length, color: { color: getColorByRank(AVGRank)}}]);
+		}
+	}
+
+	function conversatonTypeFilter(conversation, index, array) {
+		return edgeFilter.indexOf(conversation.messageType) !== -1 && edgeFilter.indexOf('RANK-' + conversation.rank) !== -1;
+	}
+
+
+	function getSumRank(total, conversation) {
+		return total + conversation.rank;
+	}
 	
-	function getEdges(){
+	function getColorByRank(rank){
+		retVal = 'blue';
+		switch  (rank) {
+			case 1: 
+				retVal = '#660000';
+				break;
+			case 2: 
+				retVal = '#ff6600';
+				break;
+			case 3: 
+				retVal = '#ffcc00';
+				break;
+			case 4: 
+				retVal = '#99ff33';
+				break;
+			case 5: 
+				retVal = '#009900';
+				break;
+
+		}		
+		return retVal;
+	}
+
+/*	function getEdges(){
 		const xmlhttp = new XMLHttpRequest();
 		let fromNode;
 		let toNode;
@@ -1110,7 +1344,7 @@ network.on("blurNode", function(params) {
 				const edgesD = JSON.parse(this.responseText);
 // 				edgesD végigolvasása
 
-				edgesDS.add(edgesD);
+				edgesDSall.add(edgesD);
 
 				for (i in edgesD) {
 //					switch(edgesD[i].con_type) {
@@ -1125,15 +1359,7 @@ network.on("blurNode", function(params) {
 //						myLog('edgesD[i].from_type: ' + edgesD[i].from_type + ', to_type: ' + edgesD[i].to_type+ ', con_type: ' + edgesD[i].con_type+ ', arrows: ' + edgesD[i].arrows);
 						fromNode = nodesDSall.get(edgesD[i].from);
 						toNode = nodesDSall.get(edgesD[i].to);
-/*						if (fromNode != null && toNode != null){
-							console.log('Node.id: ', fromNode.id);
-							if (fromNode.id == '7260')  {
-								console.log('fromNode', fromNode);
-							}
-							if (toNode.id == '7260')  {
-								console.log('toNode', fromNode);
-							}
-						}*/
+
 						switch  (edgesD[i].arrows) {
 							case 'from': 
 								fromDirection = 'in';
@@ -1156,29 +1382,6 @@ network.on("blurNode", function(params) {
 							fromNode.connections.push({con_type: edgesD[i].con_type, direction: fromDirection, id: toNode.id , node: toNode});
 							toNode.connections.push({con_type: edgesD[i].con_type, direction: toDirection, id: fromNode.id , node: fromNode});
 
-/*							if (isData == true) {
-								if (! fromNode.hasDataConnection == true){
-									if (fromNode.id == '7261')  {
-										console.log('! fromNode.hasDataConnection');
-										fromNode.hasDataConnection = true;
-//									nodesDSall.update(fromNode);	
-										nodesDSall.update({id: 7261, hasDataConnection: true});
-										console.log('fromNode.hasDataConnection update', fromNode.hasDataConnection);
-										console.log('fromNode after update', fromNode);
-									}
-								}
-								if (! toNode.hasDataConnection == true){
-									if (toNode.id == '7261')  {
-										console.log('! toNode.hasDataConnection');
-										toNode.hasDataConnection = true;
-	//								nodesDSall.update(toNode);	
-										nodesDSall.update({id: 7261, hasDataConnection: true});
-										console.log('toNode after update', toNode);
-									}
-								}
-								
-							}*/
-//							myLog('két értékem van');
 						}
 //					}
 				}
@@ -1192,8 +1395,9 @@ network.on("blurNode", function(params) {
 		};
 		
 		xmlhttp.send();
-	}	
+	}	*/
 
+	/*
 	function addWarning(newText) {
 				if (warningText !== '') {
 					warningText = warningText + '<br>';
@@ -1201,7 +1405,8 @@ network.on("blurNode", function(params) {
 				warningText = warningText + newText
 				document.getElementById("myalert").innerHTML = '<div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> <h5><i class="icon fa fa-warning"></i>Adathiba</h5>' + warningText + '</div>';
 	}
-
+*/
+/*
 	function addCallout(pNode) {
 		document.getElementById("pickedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; ">' + getIconByGroup(actNode, 'i') + '</div><div class="info"><a href=\"' + pNode.url + '" target="_blank" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" title="'+pNode.name+'">'+pNode.name+' DataFlow diagramja</a></div>';
 		document.getElementById("selectedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; ">' + getIconByGroup(actNode, 'i') + '</div><div class="info"><a href=\"' + pNode.url + '" target="_blank" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" title="'+pNode.name+'">'+pNode.name+' DataFlow diagramja</a></div>';
@@ -1209,7 +1414,9 @@ network.on("blurNode", function(params) {
 
 		selectNode(pNode);
 	}
+	*/
 
+	/*
 	function selectNode(pNode) {
 		if (typeof selectedNode !== "undefined" && selectedNode !== null) {
 			deselectNode(selectedNode);
@@ -1221,16 +1428,18 @@ network.on("blurNode", function(params) {
 		selectedNode = pNode;
 		pickedNode = pNode;
 		
-	}
+	}*/
 
+	/*
 	function removeCallout() {
 		document.getElementById("pickedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa fa-circle-o nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >Nincs kiválasztott elem</a></div>';
 		document.getElementById("selectedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa fa-circle-o nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >Nincs kiválasztott elem</a></div>';
 //		document.getElementById("objectDetails").innerHTML = '<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false"> <li class="nav-item has-treeview menu "> <a href="#" class="nav-link active"  > <i class="nav-icon fa fa-info-circle "></i> <p>Részletek <i class="right fa fa-angle-left"></i> </p> </a> <ul class="nav nav-treeview "></ul>';
 		document.getElementById("objectDetails").innerHTML = '';
 		deselectNode(selectedNode);
-	}
+	}*/
 
+	/*
     function deselectNode(pNode) {
 		if (pNode) {
 			if (selectedNode) {
@@ -1241,6 +1450,7 @@ network.on("blurNode", function(params) {
 			pickedNode = null;
 		}
     };		
+	*/
 	
 	function clearObjectlist(){
 		$("#obejctFilter").val('');
@@ -1249,8 +1459,74 @@ network.on("blurNode", function(params) {
 		$("#Objektumlista").off("click");
 	}
 	
+	
 	function fillObjectlist(){
-		const delay = 200;
+		var rIcon;
+		var lIcon;
+
+		if (pickedNode ){
+			for (i in pickedNode.conversations) {
+				if (edgeFilter.indexOf(pickedNode.conversations[i].messageType) !== -1 && edgeFilter.indexOf('RANK-' + pickedNode.conversations[i].rank) !== -1) {
+					switch(pickedNode.conversations[i].messageType) {
+						case "EMAIL":
+							lIcon = 'fa-envelope-open-o';
+							break;
+						case "CALL":
+							lIcon = 'fa-mobile';
+							break;
+						default:
+							lIcon = 'fa-circle-o';
+							break;
+					}
+		
+					rIcon = '<i id="nav-un-icon" class="fa ' + lIcon + ' nav-icon" style="color: ' + getColorByRank(pickedNode.conversations[i].rank) + ';"></i>';
+					$("#Objektumlista").append('<li id="' + pickedNode.conversations[i].messageID + '" rank="' + pickedNode.conversations[i].rank + '" class="nav-item nav-obj-el"> <a href="#" class="nav-link" title="' + pickedNode.conversations[i].hint + '">' + rIcon + ' <p id="callout-link">' + pickedNode.conversations[i].eventDT.toISOString().slice(0,10) + ' ' + pickedNode.conversations[i].partnerName + '</p> </a> </li>');
+				}
+			}
+	
+		}
+		
+
+		$('#Objektumlista').on('click','.nav-obj-el',function(e, myName, myValue) {
+			const messageID = this.id;
+			const messageRank = $("#" + messageID).attr("rank")
+			var message = messagesD.filter(function(value) {
+				return value.messageID == messageID;
+			});
+
+			if (message.length == 1) {
+				$('#mailRank').css('color', getColorByRank(parseInt(messageRank)));
+
+				document.getElementById("mailSubject").innerHTML = '&nbsp;' + message[0].subject;
+				if (message[0].fromName) {
+					document.getElementById("mailFrom").innerHTML = 'From: ' + message[0].fromName + ' (' + message[0].fromAddress + ')';
+				} else {
+					document.getElementById("mailFrom").innerHTML = 'From: ' + message[0].fromAddress;
+				}
+				if (message[0].toName) {
+					document.getElementById("mailTo").innerHTML = 'To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + message[0].toName + '<span class="mailbox-read-time pull-right">' + message[0].submitTime + '</span>';
+				}
+				document.getElementById("mailSubject").innerHTML = '&nbsp;' + message[0].subject;
+				
+				document.getElementById("mailBody").innerHTML = message[0].body;
+
+			} else {
+				$('#mailRank').css('color', 'blue');
+				document.getElementById("mailSubject").innerHTML = '&nbsp;';
+				document.getElementById("mailFrom").innerHTML = 'From:';
+				document.getElementById("mailTo").innerHTML = 'To:';
+				document.getElementById("mailBody").innerHTML = '&nbsp;';
+			}
+
+			$("#mynetwork").hide();
+			$("#myemail").show();			
+		});
+
+
+
+
+
+/*		const delay = 200;
 		const nodeIdFiltered = nodesDSVfiltered.getIds();
 		var timer = 0;
 		var prevent = false;
@@ -1281,12 +1557,15 @@ network.on("blurNode", function(params) {
       prevent = false;
     }, delay);			
 			
-		});
+		});*/
 	}
 
+/*
 	function dblclickObjektum(pNodeId){
 		 pickNode(pNodeId);
-	}
+	}*/
+
+	/*
 	function clickObjektum(pNodeId){
 			actNode = nodesDSall.get( pNodeId);
 			pickedNode = actNode;
@@ -1297,8 +1576,9 @@ network.on("blurNode", function(params) {
 			
 			clearObjectlist();
 			fillObjectlist();
-	}
+	}*/
 	
+	/*
 	function getIconByGroup(pNode, pTag, pDecoration) {
 		var rIcon;
 		var lIcon;
@@ -1383,7 +1663,7 @@ network.on("blurNode", function(params) {
 			return rIcon;
 		}
 	}
-
+*/
 	// debug 
 	function myLog(logText){
 		const dt = new Date();

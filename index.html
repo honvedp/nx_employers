@@ -12,7 +12,7 @@
   	<script src="data/eventsData.js" ></script> 
 
 	<!-- vis.js -->
-  	<script type="text/javascript" src="js/vis.js"></script>
+  	<script type="text/javascript" src="js/vis-network.min.js"></script>
 	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
 	<!-- Bootstrap 4 -->
@@ -44,10 +44,14 @@
       border: 1px solid darkgray; 
     }
 	.content-wrapper {
-		color: #90A4AE;
+		/* color: #90A4AE; */
+		 color: #1f2d3d; 
            font: 10pt arial;
            background-color: gray;
     }	
+  .mailbox-read-time{
+    color: #1f2d3d; 
+  }
 	.main-sidebar {
            background-color: darkgray;  
     }	
@@ -178,7 +182,7 @@
             <a href="#" class="nav-link active">
               <i class="nav-icon fa fa-filter"></i>
               <p>
-                Objektum szűrő
+                Szűrő
                 <i class="right fa fa-angle-left"></i>
               </p>
             </a>
@@ -192,7 +196,7 @@
               </li>	
               <li id="nav-allocated" class="nav-item">
                 <a href="#" class="nav-link active">
-                  <i id="nav-allocated-icon-filter" class="fa fa-calendar-check-o nav-icon" style="color: #007bff;"></i>
+                  <i id="nav-allocated-icon-filter" class="fa fa-calendar-check-o nav-icon" style="color: grey;"></i>
                   <p>Allokálva</p>
                 </a>
               </li>			
@@ -206,6 +210,50 @@
                 <a href="#" class="nav-link active">
                   <i id="nav-email-icon-filter" class="fa fa-envelope-open-o nav-icon" style="color: #007bff;"></i>
                   <p>E-mail</p>
+                </a>
+              </li>			
+
+              <li id="nav-rank-1" class="nav-item">
+                <a href="#" class="nav-link active">
+                  <i id="nav-rank-1-icon-filter" class="fa fa-circle-o nav-icon" style="color: #660000;"></i>
+                  <p>rank 1</p>
+                </a>
+              </li>			
+              <li id="nav-rank-2" class="nav-item">
+                <a href="#" class="nav-link active">
+                  <i id="nav-rank-2-icon-filter" class="fa fa-circle-o nav-icon" style="color: #ff6600;"></i>
+                  <p>rank 2</p>
+                </a>
+              </li>			
+              <li id="nav-rank-3" class="nav-item">
+                <a href="#" class="nav-link active">
+                  <i id="nav-rank-3-icon-filter" class="fa fa-circle-o nav-icon" style="color: #ffcc00;"></i>
+                  <p>rank 3</p>
+                </a>
+              </li>			
+              <li id="nav-rank-4" class="nav-item">
+                <a href="#" class="nav-link active">
+                  <i id="nav-rank-4-icon-filter" class="fa fa-circle-o nav-icon" style="color: #99ff33;"></i>
+                  <p>rank 4</p>
+                </a>
+              </li>			
+              <li id="nav-rank-5" class="nav-item">
+                <a href="#" class="nav-link active">
+                  <i id="nav-rank-5-icon-filter" class="fa fa-circle-o nav-icon" style="color: #009900;"></i>
+                  <p>rank 5</p>
+                </a>
+              </li>			
+
+              <li id="test1" class="nav-item">
+                <a href="#" class="nav-link active">
+                  <i id="test1-filter" class="fa fa-circle nav-icon" style="color: blue;"></i>
+                  <p>test1</p>
+                </a>
+              </li>			
+              <li id="test2" class="nav-item">
+                <a href="#" class="nav-link active">
+                  <i id="test2-filter" class="fa fa-circle nav-icon" style="color: red;"></i>
+                  <p>test2</p>
                 </a>
               </li>			
 			  
@@ -242,17 +290,14 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item has-treeview menu-open ">
             <a href="#" class="nav-link active"  >
-             <i class="nav-icon fa fa-th-list"></i>
-              <p>Objektumlista
+             <i class="nav-icon fa fa-comments"></i>
+              <p>Kommunikáció
                 <i class="right fa fa-angle-left"></i>
               </p>
             </a> 
             <ul id="objectDetails" class="nav nav-treeview ">
           <li class="nav-item menu-open"  >
-            <a href="#" class="nav-link">
-                <input id="obejctFilter" class="form-control form-control-navbar" type="search" placeholder="Filter..">
-            </a>
-			<div id="Objektumlista"></div>
+			        <div id="Objektumlista"></div>
           </li>
 			  
 			</ul>
@@ -271,6 +316,38 @@
     <div class="content">
       <div class="container-fluid">
 		<div id="mynetwork">mynetwork</div>
+		<div id="myemail">
+
+
+      <div class="box box-primary">
+        <h3 id="mailSubject"></h3>
+
+          <div class="box-tools pull-right">
+            <a href="#" class="btn btn-box-tool" data-toggle="tooltip" title="" data-original-title="Next"><i id="mailRank" class="fa fa-circle-o nav-icon" ></i></a>
+          </div>
+      </div>
+
+        <!-- /.box-header -->
+        <div class="box-header with-border">
+        <div class="box-body no-padding">
+          <div class="mailbox-read-info">
+            <h3></h3>
+            <h5 id="mailFrom"></h5>
+            <h5 id="mailTo"></h5">
+          </div>
+          <!-- /.mailbox-read-info -->
+          <div class="mailbox-read-message">
+            <p id="mailBody"></p>
+          </div>
+          <!-- /.mailbox-read-message -->
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /. box -->
+    
+
+
+    </div>
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content -->

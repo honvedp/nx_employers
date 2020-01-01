@@ -379,50 +379,25 @@ var allocationsD = [
 						{projectCode: 'MT_APPDEV_MYTS_SUPPORT_2019', projectName: 'MT APPDEV MYTS SUPPORT 2019', userId: 'en_150', fromDT: '2019-01-02T00:00:00Z', toDT: '2019-12-31T00:00:00Z', allocPercent: 0},
 						{projectCode: 'MT_APPDEV_MYTS_SUPPORT_2019', projectName: 'MT APPDEV MYTS SUPPORT 2019', userId: 'en_45', fromDT: '2019-01-02T00:00:00Z', toDT: '2019-12-31T00:00:00Z', allocPercent: 0},
 						{projectCode: 'MT_TESTFACTORY_2019', projectName: 'MT_TESTFACTORY_2019', userId: 'en_166', fromDT: '2019-01-02T00:00:00Z', toDT: '2019-12-31T00:00:00Z', allocPercent: 100}	
-]
+];
 
 
 	
 
 	var conversationsD = [
-                        {eventDT: '2019-01-10T12:00:00Z', userIdFrom: 'en_26', userIdTo: 'en_17', messageType: 'EMAIL', messageID: '16b69682844ed1a5'},
-                        {eventDT: '2019-08-10T12:05:00Z', userIdFrom: 'en_17', userIdTo: 'en_26', messageType: 'EMAIL', messageID: '16b69682844ed1a6'},
-                        {eventDT: '2019-08-10T12:10:00Z', userIdFrom: 'en_17', userIdTo: 'en_26', messageType: 'CALL', messageID: '16b69682844ed1a6'},
-                        {eventDT: '2019-09-12T13:00:00Z', userIdFrom: 'en_42', userIdTo: 'en_60', messageType: 'EMAIL', messageID: '16b69682844ed1a7'},
-                        {eventDT: '2019-09-12T13:05:00Z', userIdFrom: 'en_42', userIdTo: 'en_60', messageType: 'EMAIL', messageID: '16b69682844ed1a8'},
-                        {eventDT: '2019-10-12T14:00:00Z', userIdFrom: 'en_42', userIdTo: 'en_26', messageType: 'EMAIL', messageID: '16b69682844ed1a9'}
-]
+                        {eventDT: '2019-01-10T12:00:00Z', userIdFrom: 'en_26', userIdTo: 'en_17', messageType: 'EMAIL', messageID: '16b69682844ed1a5', rank: 5},
+                        {eventDT: '2019-08-10T12:05:00Z', userIdFrom: 'en_17', userIdTo: 'en_26', messageType: 'EMAIL', messageID: '16b69682844ed1a6', rank: 1},
+                        {eventDT: '2019-08-10T12:10:00Z', userIdFrom: 'en_17', userIdTo: 'en_26', messageType: 'CALL', messageID: '16b69682844ed1a6', rank: 2},
+                        {eventDT: '2019-09-12T13:00:00Z', userIdFrom: 'en_42', userIdTo: 'en_60', messageType: 'EMAIL', messageID: '16b69682844ed1a7', rank: 5},
+                        {eventDT: '2019-09-12T13:05:00Z', userIdFrom: 'en_42', userIdTo: 'en_60', messageType: 'EMAIL', messageID: '16b69682844ed1a8', rank: 5},
+                        {eventDT: '2019-10-12T14:00:00Z', userIdFrom: 'en_42', userIdTo: 'en_26', messageType: 'EMAIL', messageID: '16b69682844ed1a9', rank: 1}
+];
 
-var treeData = [
-/*	{
-	  text: "Parent 1",
-	  nodes: [
-		{
-		  text: "Child 1",
-		  nodes: [
-			{
-			  text: "Gchild 1"
-			},
-			{
-			  text: "Gchild 2"
-			}
-		  ]
-		},
-		{
-		  text: "Child 2"
-		}
-	  ]
-	},
-	{
-	  text: "Parent 2"
-	},
-	{
-	  text: "Parent 3"
-	},
-	{
-	  text: "Parent 4"
-	},
-	{
-	  text: "Parent 5"
-	}*/
-  ];
+var messagesD = [
+	{messageType: 'EMAIL', messageID: '16b69682844ed1a5', fromName: 'Haller, Renáta', fromAddress: 'haller.renata@nextent.hu', submitTime: '2019-01-10 12:00:00', toName: 'Balázs, Attila', 
+	subject: '16b69682844ed1a5 subject', 
+	body: 'Szia Attila,</br>nagyon tetszik, főleg a két gorilla. A bárpult hölgyei és és a bár tender</br>is nagyon jól sikerültek.</br>	Megírom ezeket Jaynek és persze a kéz- és lábtörést...</br></br>Üdv</br>Attila'},
+	{messageType: 'EMAIL', messageID: '16b69682844ed1a6', fromName: 'Balázs, Attila', fromAddress: 'haller.renata@nextent.hu', submitTime: '2019-01-10 12:00:00', toName: 'Haller, Renáta', 
+	subject: '16b69682844ed1a6 subject', 
+	body: 'Szia Reni,</br>nagyon tetszik, főleg a két gorilla. A bárpult hölgyei és és a bár tender</br>is nagyon jól sikerültek.</br>	Megírom ezeket Jaynek és persze a kéz- és lábtörést...</br></br>Üdv</br>Attila'}
+];

@@ -33,7 +33,14 @@ const options = {
 				selectionWidth:  function (width) {
 //				myLog("Selection:width: " + width);
 					return width;
-				}/*,
+				},
+				color: {
+					color: 'darkgray', 
+					hover: 'blue', 
+					highlight: 'white'
+				}
+				
+				/*,
 				length:	300*/
 //				smooth:{type:'cubicBezier'}
 			},

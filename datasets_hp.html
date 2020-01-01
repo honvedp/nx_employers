@@ -132,7 +132,7 @@
 	loadData(sliderMinValue, sliderMaxValue, null, null, document.getElementById('chkProjekt').checked, document.getElementById('chkAllocation').checked);
 
 	$('#myTree').treeview({
-    data: treeData
+    data: messages
 	});
 	
 	function setDateRange() {
@@ -159,7 +159,7 @@
 			(employersD[i].munkaviszonyTo) ? munkaviszonyTo = new Date(employersD[i].munkaviszonyTo) : munkaviszonyTo = new Date();
 
 			if (munkaviszonyFrom <=  fromDT && munkaviszonyTo >= toDT) {
-				upsertNode(employersD[i].id, employersD[i].name, employersD[i].name + '</br>(' + employersD[i].email + ')', 'dot', 'user', employersD[i].treeData);
+				upsertNode(employersD[i].id, employersD[i].name, employersD[i].name + '</br>(' + employersD[i].email + ')', 'dot', 'user', employersD[i].messages);
 //				myLog('eventsD végigolvasása: ' + employersD[i].name);
 			}
 		}
@@ -225,26 +225,26 @@
 			}*/
 //			actNode.events.push(snapshotEventDT);
 		} else {
-			nodes.add({id: pId, /*label: pLabel, */title: pTitle, label: pLabel, shape: pShape, size: 15, icon: {size: 15}, group: 'act'+pGroup, treeData: []});
+			nodes.add({id: pId, /*label: pLabel, */title: pTitle, label: pLabel, shape: pShape, size: 15, icon: {size: 15}, group: 'act'+pGroup, messages: []});
 //			nodes.add({id: pId, /*label: pLabel, */title: pLabel, shape: pShape, size: 15, icon: {size: 15}, group: 'user'/*, events: [snapshotEventDT]*/});
 			nodeIds.push(pId);
 		}
 	}
 
-	function setTreeNode(treeData, pLabel, pText) {
+	function setTreeNode(messages, pLabel, pText) {
 		var bFound = false;
 		var i = 0;
-		if (treeData.length == 0) {
-			treeData.push({text: pLabel, nodes: [{text: pText}]});
+		if (messages.length == 0) {
+			messages.push({text: pLabel, nodes: [{text: pText}]});
 		} else {
-			for (i = 0; i < treeData.length; i++) {
-				if (treeData[i].text == pLabel) {
-					treeData[i].nodes.push({text: pText});
+			for (i = 0; i < messages.length; i++) {
+				if (messages[i].text == pLabel) {
+					messages[i].nodes.push({text: pText});
 					bFound = true;
 				}
 			}
 			if (! bFound) {
-				treeData.push({text: pLabel, nodes: [{text: pText}]});
+				messages.push({text: pLabel, nodes: [{text: pText}]});
 			}
 		}
 	}
@@ -257,35 +257,35 @@
 			var actNodeTo = nodes.get(pTo);
 
 			if (actNodeFrom.id.substring(0, 3) == "en_" && actNodeTo.id.substring(0, 3) == "en_") {
-				var actFromInd = actNodeFrom.treeData.indexOf(actNodeTo.label);
-//				myLog('actNodeFrom.treeData.length: ' + actNodeFrom.treeData.length);
+				var actFromInd = actNodeFrom.messages.indexOf(actNodeTo.label);
+//				myLog('actNodeFrom.messages.length: ' + actNodeFrom.messages.length);
 //				myLog('actNodeTo.label: ' + actNodeTo.label);
 
 
-/*				for (i = 0; i < actNodeFrom.treeData.length; i++) {
-					 myLog('     entrie: ' +  actNodeFrom.treeData[i].text);
+/*				for (i = 0; i < actNodeFrom.messages.length; i++) {
+					 myLog('     entrie: ' +  actNodeFrom.messages[i].text);
 				}
 */
-				setTreeNode(actNodeFrom.treeData, actNodeTo.label, pText);
-				setTreeNode(actNodeTo.treeData, actNodeFrom.label, pText);
+				setTreeNode(actNodeFrom.messages, actNodeTo.label, pText);
+				setTreeNode(actNodeTo.messages, actNodeFrom.label, pText);
 
-/*				var f = actNodeFrom.treeData.entries();
+/*				var f = actNodeFrom.messages.entries();
 				for (x of f) {
 					myLog('     entrie: ' + x.text);
 				}*/
 
 //				if (actFromInd == -1 ) {
-//					actNodeFrom.treeData.push({text: actNodeTo.label});
-//					actNodeFrom.treeData = [{text: actNodeTo.label, nodes: [{text: pText}]}];
-//					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [{text: pText}]});
-//					actNodeFrom.treeData.push({text: actNodeTo.label, nodes: [pText]});
+//					actNodeFrom.messages.push({text: actNodeTo.label});
+//					actNodeFrom.messages = [{text: actNodeTo.label, nodes: [{text: pText}]}];
+//					actNodeFrom.messages.push({text: actNodeTo.label, nodes: [{text: pText}]});
+//					actNodeFrom.messages.push({text: actNodeTo.label, nodes: [pText]});
 /*				} else {
-					actNodeFrom.treeData[actFromInd].nodes.push({text: pText});
-//					actNodeFrom.treeData[actFromInd].nodes.push(pText);*/
+					actNodeFrom.messages[actFromInd].nodes.push({text: pText});
+//					actNodeFrom.messages[actFromInd].nodes.push(pText);*/
 //				}
-/*				if (actNodeTo.treeData.indexOf(actNodeFrom.title) == -1) {
-					actNodeTo.treeData.push({text: actNodeFrom.label, nodes: [{text: pText}]});
-//					actNodeTo.treeData.push({text: actNodeFrom.label, nodes: [pText]});
+/*				if (actNodeTo.messages.indexOf(actNodeFrom.title) == -1) {
+					actNodeTo.messages.push({text: actNodeFrom.label, nodes: [{text: pText}]});
+//					actNodeTo.messages.push({text: actNodeFrom.label, nodes: [pText]});
 				}*/
 			}
 		}
@@ -436,9 +436,9 @@
 */			
 			var actNode = nodes.get(actNodeId);
 			var icnon = '';
-			if (actNode.treeData.length > 0) {
+			if (actNode.messages.length > 0) {
 				$('#myTree').treeview({
-					data: actNode.treeData
+					data: actNode.messages
 				});
 			} else {
 				$('#myTree').treeview({

@@ -228,10 +228,10 @@ $(document).ready(function(){
 		
 		if (edgeFilter.length > 0) {
 			clearObjectlist();
+			fillObjectDetails();
 			fillObjectlist();
 		}
 	}	
-
 
 	
 	$('#test1').click(function(e){
@@ -272,18 +272,14 @@ $(document).ready(function(){
 			document.getElementById("selectedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa fa-circle-o nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >Nincs kiválasztott dolgozó</a></div>';
 		}
 		clearObjectlist();
+		fillObjectDetails();
 		fillObjectlist();
     });
-
-
-
 	
     function fit(){
 		myLog('fit');
 		network.fit();
     }
-  
-  
   
 	function getNodes(){
 		let lRESP;
@@ -295,6 +291,21 @@ $(document).ready(function(){
 					(employersD[i].munkaviszonyTo) ? munkaviszonyTo = new Date(employersD[i].munkaviszonyTo) : munkaviszonyTo = new Date();
 
 					if (  nodeIds.indexOf( lId ) < 0 ) {
+
+						lDetails = '<li class="nav-item" style="width:100%"><div class="nav-link active"><table style="width:100%"><tbody>';
+						lDetails = lDetails + '<tr class="node-hint-header"><td colspan="2" style="text-align: left">Elérhetőségek</td></tr>';
+						lDetails = lDetails + '<tr><th>E-mail</th> <td>' + employersD[i].email + '</td></tr>';
+						lDetails = lDetails + '<tr><th>Telefon</th> <td align="center">-</td></tr>';
+
+						lDetails = lDetails + '<tr class="node-hint-header"><td colspan="2" style="text-align: left">Munkaviszony</td></tr>';
+						lDetails = lDetails + '<tr><th>Kezdete</th> <td>' + employersD[i].munkaviszonyFrom + '</td></tr>';
+						myLog('employersD[i].munkaviszonyTo: ' + employersD[i].munkaviszonyTo);
+						if (employersD[i].munkaviszonyTo !== null) {
+							lDetails = lDetails + '<tr><th>Vége</th> <td>' + employersD[i].munkaviszonyTo + '</td></tr>';
+						} else {
+							lDetails = lDetails + '<tr><th>Vége</th> <td align="center">-</td></tr>';
+						}
+						lDetails = lDetails + '</tbody></table></div></li>';
 						actNode = {id: lId, 
 						           title: employersD[i].name + '</br>(' + employersD[i].email + ')',
 								   label: employersD[i].name, 
@@ -302,7 +313,11 @@ $(document).ready(function(){
 								   size: 15, 
 								   icon: {size: 15}, 
 								   group: 'EMPLOYER', 
-								   conversations: []
+								   conversations: [],
+								   munkaviszonyFrom: employersD[i].munkaviszonyFrom,
+								   munkaviszonyTo: employersD[i].munkaviszonyTo,
+								   email: employersD[i].email,
+								   details: lDetails
 								   };
 								   
 						nodeIds.push(lId, 'EMPLOYER');
@@ -420,13 +435,23 @@ $(document).ready(function(){
 	}
 
 	function clearObjectlist(){
-		$("#obejctFilter").val('');
+		$("#objectDetails").empty();
+		$("#objectDetails").height(0);
+
 		$("#Objektumlista").empty();
 		$("#Objektumlista").off("dblclick");
 		$("#Objektumlista").off("click");
 	}
 	
-	
+	function fillObjectDetails(){
+		if (pickedNode ){
+			$("#objectDetails").append(pickedNode.details);
+			$("#objectDetails").height(125);
+		} else {
+			$("#objectDetails").height(0);
+		}
+	}
+
 	function fillObjectlist(){
 		var rIcon;
 		var lIcon;

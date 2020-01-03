@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+    <title>NXT | Connected Persons</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>NXT | Connected Persons</title>
+
+  
+	<!-- data -->
+  	<script src="data/eventsData.js" ></script> 
+
+	<!-- vis.js -->
+  	<script type="text/javascript" src="js/vis-network.min.js"></script>
+	<!-- jQuery -->
+  <!-- <script src="js/jquery.min.js"></script> -->
+  
+  <!-- jQDateRangeSlider -->
+	<script src="lib/jquery-1.10.2.min.js"></script>
+	<script src="lib/jquery-ui-1.10.3.min.js"></script>
+	<script src="lib/jQDateRangeSlider-min.js"></script>
+
+	<!-- Bootstrap 4 -->
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="js/adminlte.min.js"></script>
+	<!-- A logikát megvalósító JS script 
+	<script src="js/scripts.js"></script>-->
+	<!-- A logikát megvalósító JS script -->
+	<script src="config/config.js" ></script>
+	
+	<!-- vis.js -->
+	<link href="css/vis-network.min.css" rel="stylesheet" type="text/css" />
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<!-- Theme style -->
+  <link rel="stylesheet" href="css/adminlte.min.css">
+  <!-- jQDateRangeSlider -->
+  <link rel="stylesheet" href="lib/css/iThing.css" type="text/css" />
+  <style type="text/css">
+    body {
+		color: #90A4AE;
+           font: 10pt arial;
+    }	
+	hr {
+		border: 1px solid #BFBFBF;
+	}	  
+    #mynetwork {
+      border: 1px solid darkgray; 
+    }
+	.content-wrapper {
+		/* color: #90A4AE; */
+		 color: #1f2d3d; 
+           font: 10pt arial;
+           background-color: gray;
+    }	
+  .mailbox-read-time{
+    color: #1f2d3d; 
+  }
+	.main-sidebar {
+           background-color: darkgray;  
+    }	
+	.main-header {
+           background-color: darkgray;  
+    }	
+	
+	.node-hint-header {
+        background-color: lightgray; 
+		text-align: left; 		   
+		font-weight: bold; 
+		margin-top: 50px;
+		margin-bottom: 5px;
+	}
+	
+	.node-hint-key {
+		text-align: left; 		   
+		font-weight: bold; 
+		padding-top: 2px;
+		padding-bottom: 2px;
+		padding-right: 10px;
+		padding-left: 10px;
+	}	
+	
+	#callout-selected-text {
+           color: #343a40;
+		   
+    }	
+	
+	#callout-selected-link {
+           color: #343a40;
+    }	
+	
+	#callout-link 
+	{
+        color: #343a40;  
+		font-weight: 100;
+    }	
+	
+	#callout-link-white
+	{
+        color: #fff;  
+		font-weight: 400;
+    }	
+	
+	.control-sidebar-dark,.control-sidebar-dark:before
+	{
+		background: #666;
+	}
+	
+	.pull-right {
+		float: right!important;
+	}
+	
+
+
+  
+  </style>  
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-12" >
+			<div id="dateSlider"></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-2">
+			<div class="row">
+			<div class="col-sm-1">
+				123
+			</div>			
+			</div>
+		</div>
+		</div>
+		<div class="col-sm-10" >
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+    $("#dateSlider").dateRangeSlider();
+
+	$("#dateSlider").dateRangeSlider("bounds", new Date(2018, 0, 1), new Date(2018, 11, 30));
+	$("#dateSlider").dateRangeSlider("values", new Date(2018, 1, 1), new Date(2018, 10, 30));
+</script>
+
+</body>
+</html>

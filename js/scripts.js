@@ -17,6 +17,7 @@ $(document).ready(function(){
 	let edgeFilter = ['CALL', 'EMAIL', 'RANK-1', 'RANK-2', 'RANK-3', 'RANK-4', 'RANK-5'];
 	let actNode;
 	let pickedNode;
+	let pickedEdge;
 	let nodeIds = [];
 	let edgeIds = [];
 	let nodesDSall = new vis.DataSet();
@@ -242,33 +243,44 @@ $(document).ready(function(){
      });
 
     network.on("click", function (params) {
-		if (params.nodes.length > 0) { // van kiválasztott NODE
-			actNode = nodesDSall.get( params.nodes)[0];
-			pickedNode = actNode;
-			
-//			document.getElementById("pickedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; ">' + getIconByGroup(actNode, 'i') + '</div><div class="info"><a href=\"' + actNode.url + '" target="_blank" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" title="'+actNode.name+'">'+actNode.name+' DataFlow diagramja</a></div>';
-//			document.getElementById("objectDetails").innerHTML = actNode.details;
-			var lIcon = '';
-			switch(actNode.group) {
-				case "PROJECT":
-					lIcon = 'fa-file-text';
-					break;
-				case "EMPLOYER":
-					lIcon = 'fa-user';
-					break;
-				default:
-					lIcon = 'fa-circle-o';
-	//				rIcon = '<i' + pTag + ' id="nav-un-icon" class="fa fa-circle-o nav-icon"></' + pTag + '>';
-					break;
-			}
+		if ((params.edges.length > 0) || (params.nodes.length > 0)) { 
+			if (params.nodes.length > 0) { // van kiválasztott NODE
+				actNode = nodesDSall.get( params.nodes)[0];
+				pickedNode = actNode;
+				
+				var lIcon = '';
+				switch(actNode.group) {
+					case "PROJECT":
+						lIcon = 'fa-file-text';
+						break;
+					case "EMPLOYER":
+						lIcon = 'fa-user';
+						break;
+					default:
+						lIcon = 'fa-circle-o';
+		//				rIcon = '<i' + pTag + ' id="nav-un-icon" class="fa fa-circle-o nav-icon"></' + pTag + '>';
+						break;
+				}
+		
+				document.getElementById("selectedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa ' + lIcon + ' nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >' + actNode.label + '</a></div>';
+				pickedEdge = null;
+				
+//				myLog('params.nodes.length: '+ params.nodes.length);
+
+			} else {
+				if (params.edges.length > 0) { // van kiválasztott EDGE
+//					myLog('params.edges.length: '+ params.edges.length);
+					pickedEdge = edgesDSall.get( params.edges[0]);
 	
-			document.getElementById("pickedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa ' + lIcon + ' nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >' + actNode.label + '</a></div>';
-			document.getElementById("selectedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa ' + lIcon + ' nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >' + actNode.label + '</a></div>';
+					pickedNode = null;			
+				}		
+			}
 			
-			myLog('actNode.label: ' + actNode.label);
 		} else {
+//			myLog('egyik sem ');
+
 			pickedNode = null;
-			document.getElementById("pickedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa fa-circle-o nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >Nincs kiválasztott dolgozó</a></div>';
+			pickedEdge = null;
 			document.getElementById("selectedNode").innerHTML = '<div class="image" style="font-size: 1.3rem; margin-left: .5rem; "> <i id="nav-data-icon" class="fa fa-circle-o nav-icon" style="color: #1063AD; margin-top: .2rem;"></i></div><div class="info"><a href="#" class="d-block" style="color: rgba(255,255,255,.8); font-size: 1rem;" >Nincs kiválasztott dolgozó</a></div>';
 		}
 		clearObjectlist();
@@ -299,7 +311,6 @@ $(document).ready(function(){
 
 						lDetails = lDetails + '<tr class="node-hint-header"><td colspan="2" style="text-align: left">Munkaviszony</td></tr>';
 						lDetails = lDetails + '<tr><th>Kezdete</th> <td>' + employersD[i].munkaviszonyFrom + '</td></tr>';
-						myLog('employersD[i].munkaviszonyTo: ' + employersD[i].munkaviszonyTo);
 						if (employersD[i].munkaviszonyTo !== null) {
 							lDetails = lDetails + '<tr><th>Vége</th> <td>' + employersD[i].munkaviszonyTo + '</td></tr>';
 						} else {
@@ -372,16 +383,16 @@ $(document).ready(function(){
 					if (fromNode != null && toNode != null){
 						lId = fromNode + ' -> ' + toNode;
 						iEdge = edgeIds.indexOf( lId);
+						eventDT = new Date(conversationsD[i].eventDT);
+						hint = nodesDSall.get(fromNode).label + ' -> ' + nodesDSall.get(toNode).label;
 						if ( iEdge >= 0) {
-							edgesDSall.get(lId).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID});
+							edgesDSall.get(lId).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(toNode).label, hint: hint});
 
 
 						} else {
-							edgesDSall.add({id: lId, from: fromNode, to: toNode, type: 'CONVERSATION', count: 1, width: 1, arrows: 'to', color: { color: '#660000'}, conversations: [{rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID}] });
+							edgesDSall.add({id: lId, from: fromNode, to: toNode, type: 'CONVERSATION', count: 1, width: 1, arrows: 'to', color: { color: '#660000'}, conversations: [{rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(toNode).label, hint: hint}] });
 							edgeIds.push(lId);
 						}
-						eventDT = new Date(conversationsD[i].eventDT);
-						hint = nodesDSall.get(fromNode).label + ' -> ' + nodesDSall.get(toNode).label;
 						nodesDSall.get(fromNode).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(toNode).label, hint: hint});
 						nodesDSall.get(toNode).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(fromNode).label, hint: hint});
 					}
@@ -475,7 +486,26 @@ $(document).ready(function(){
 					$("#Objektumlista").append('<li id="' + pickedNode.conversations[i].messageID + '" rank="' + pickedNode.conversations[i].rank + '" class="nav-item nav-obj-el"> <a href="#" class="nav-link" title="' + pickedNode.conversations[i].hint + '">' + rIcon + ' <p id="callout-link">' + pickedNode.conversations[i].eventDT.toISOString().slice(0,10) + ' ' + pickedNode.conversations[i].partnerName + '</p> </a> </li>');
 				}
 			}
-	
+		}
+		if (pickedEdge ){
+			for (i in pickedEdge.conversations) {
+				if (edgeFilter.indexOf(pickedEdge.conversations[i].messageType) !== -1 && edgeFilter.indexOf('RANK-' + pickedEdge.conversations[i].rank) !== -1) {
+					switch(pickedEdge.conversations[i].messageType) {
+						case "EMAIL":
+							lIcon = 'fa-envelope-open-o';
+							break;
+						case "CALL":
+							lIcon = 'fa-mobile';
+							break;
+						default:
+							lIcon = 'fa-circle-o';
+							break;
+					}
+		
+					rIcon = '<i id="nav-un-icon" class="fa ' + lIcon + ' nav-icon" style="color: ' + getColorByRank(pickedEdge.conversations[i].rank) + ';"></i>';
+					$("#Objektumlista").append('<li id="' + pickedEdge.conversations[i].messageID + '" rank="' + pickedEdge.conversations[i].rank + '" class="nav-item nav-obj-el"> <a href="#" class="nav-link" title="' + pickedEdge.conversations[i].hint + '">' + rIcon + ' <p id="callout-link">' + pickedEdge.conversations[i].eventDT.toISOString().slice(0,10) + ' ' + pickedEdge.conversations[i].partnerName + '</p> </a> </li>');
+				}
+			}
 		}
 		
 

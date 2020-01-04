@@ -16,11 +16,12 @@
 	<!-- jQuery -->
   <script src="js/jquery.min.js"></script>
   
-  <!-- jQDateRangeSlider -->
-	<script src="lib/jquery-1.10.2.min.js"></script>
-	<script src="lib/jquery-ui-1.10.3.min.js"></script>
-  <script src="lib/jQDateRangeSlider-min.js"></script>
-  
+  <!-- datepicker -->
+  <link rel="stylesheet" href="css/jquery-ui.css">
+  <link rel="stylesheet" href="css/daterangepicker.css">
+  <script src="lib/jquery-1.12.4.js"></script>
+  <script src="lib/jquery-ui.js"></script>
+
 	<!-- Bootstrap 4 -->
 	<script src="js/bootstrap.bundle.min.js"></script>
 	<!-- AdminLTE App -->
@@ -36,7 +37,6 @@
 	<link rel="stylesheet" href="css/font-awesome.min.css">
 	<!-- Theme style -->
 	<link rel="stylesheet" href="css/adminlte.min.css">
-  <link rel="stylesheet" href="lib/css/iThing.css" type="text/css" />
 
 
   <style type="text/css">
@@ -143,7 +143,7 @@
       </div>  
     </div>
 	  <div>123</div>
-	  <div id="dateSlider"></div>
+<!--	  <div id="dateSlider"></div> -->
 	  <div>456</div>
 	  
 <!--      <li class="nav-item d-none d-sm-inline-block">
@@ -200,6 +200,12 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
+              <li id="nav-date" class="nav-item">
+                <a href="#" class="nav-link active">
+                  <i id="nav-date-icon-filter" class="fa fa-calendar nav-icon" style="color: #007bff;"></i>
+                  <p><input type="text" id="datepickerFrom" size="7"> - <input type="text" id="datepickerTo" size="7"></p>
+                 </a>
+              </li>	             
 			  
               <li id="nav-projects" class="nav-item">
                 <a href="#" class="nav-link active">
@@ -255,7 +261,10 @@
                   <i id="nav-rank-5-icon-filter" class="fa fa-circle-o nav-icon" style="color: #009900;"></i>
                   <p>rank 5</p>
                 </a>
-              </li>			
+              </li>	
+
+
+
 <!--              <li id="test1" class="nav-item">
                 <a href="#" class="nav-link active">
                   <i id="test1-filter" class="fa fa-circle nav-icon" style="color: blue;"></i>
@@ -324,23 +333,9 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Main content -->
-    <section class="content-header">
-        <!-- <div id="dateSlider"></div> -->
-      <!-- <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Dashboard</li>
-      </ol> -->
-    </section>
     <div class="content">
           <div class="container-fluid">
 
-            <!-- <div id="dateSlider" class="ui-rangeSlider ui-rangeSlider-withArrows ui-dateRangeSlider" style="position: relative;"><div class="ui-rangeSlider-container" style="position: absolute; width: 661px;"><div class="ui-rangeSlider-innerBar" style="position: absolute; top: 0px; left: 0px; width: 661px;"></div><div class="ui-rangeSlider-bar" style="position: absolute; top: 0px; width: 661px; left: 0px;"></div><div class="ui-rangeSlider-handle ui-rangeSlider-rightHandle" style="position: absolute; top: 0px; left: 651px;"><div class="ui-rangeSlider-handle-inner"></div></div><div class="ui-rangeSlider-handle ui-rangeSlider-leftHandle" style="position: absolute; top: 0px; left: 0px;"><div class="ui-rangeSlider-handle-inner"></div></div></div><div class="ui-rangeSlider-arrow ui-rangeSlider-leftArrow" style="position: absolute; left: 0px;"><div class="ui-rangeSlider-arrow-inner"></div></div><div class="ui-rangeSlider-arrow ui-rangeSlider-rightArrow" style="position: absolute; right: 0px;"><div class="ui-rangeSlider-arrow-inner"></div></div><div class="ui-rangeSlider-label ui-rangeSlider-rightLabel" style="position: absolute; display: block; right: -28.5px;"><div class="ui-rangeSlider-label-value">2019-10-12</div><div class="ui-rangeSlider-label-inner"></div></div><div class="ui-rangeSlider-label ui-rangeSlider-leftLabel" style="position: absolute; display: block; left: -28.5px;"><div class="ui-rangeSlider-label-value">2019-01-10</div><div class="ui-rangeSlider-label-inner"></div></div></div>       -->
-            <script type="text/javascript">
-              $("#dateSlider").dateRangeSlider();
-          
-            $("#dateSlider").dateRangeSlider("bounds", new Date(2018, 0, 1), new Date(2018, 11, 30));
-            $("#dateSlider").dateRangeSlider("values", new Date(2018, 1, 1), new Date(2018, 10, 30));
-          </script>
       
 		<div id="mynetwork">mynetwork</div>
 		<div id="myemail">

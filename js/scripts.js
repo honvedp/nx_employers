@@ -5,6 +5,8 @@ $(document).ready(function(){
 	const gNodeLimit = 150;
 
 	let network;
+	let fromDate = new Date();
+	let toDate = new Date(1970, 0, 0);	
 	let bProject = true;
 	let bAllocated = false;
 	let bCall = true;
@@ -96,6 +98,7 @@ $(document).ready(function(){
 
 
 //	filterChnage();
+	setDateRange();
 	getNodes();
 
 	// load settings from localStorage
@@ -292,7 +295,18 @@ $(document).ready(function(){
 		myLog('fit');
 		network.fit();
     }
-  
+	
+	function setDateRange() {
+		for (i = 0; i < conversationsD.length; i++ ) {
+			eventDT = new Date(conversationsD[i].eventDT);
+			if (fromDate > eventDT) fromDate = eventDT;
+			if (toDate < eventDT) toDate = eventDT;
+		}
+
+		$("#datepickerFrom" ).val(fromDate.toISOString().slice(0,10).replace(/-/g,".")+".");
+		$("#datepickerTo" ).val(toDate.toISOString().slice(0,10).replace(/-/g,".")+".");
+	}
+
 	function getNodes(){
 		let lRESP;
 		let lPos;
@@ -414,7 +428,10 @@ $(document).ready(function(){
 	}
 
 	function conversatonTypeFilter(conversation, index, array) {
-		return edgeFilter.indexOf(conversation.messageType) !== -1 && edgeFilter.indexOf('RANK-' + conversation.rank) !== -1;
+		return edgeFilter.indexOf(conversation.messageType) !== -1 
+			&& edgeFilter.indexOf('RANK-' + conversation.rank) !== -1 
+			&& conversation.eventDT >= fromDate
+			&& conversation.eventDT <= toDate;
 	}
 
 
@@ -469,7 +486,11 @@ $(document).ready(function(){
 
 		if (pickedNode ){
 			for (i in pickedNode.conversations) {
-				if (edgeFilter.indexOf(pickedNode.conversations[i].messageType) !== -1 && edgeFilter.indexOf('RANK-' + pickedNode.conversations[i].rank) !== -1) {
+				if (   edgeFilter.indexOf(pickedNode.conversations[i].messageType) !== -1 
+					&& edgeFilter.indexOf('RANK-' + pickedNode.conversations[i].rank) !== -1
+					&& pickedNode.conversations[i].eventDT >= fromDate
+					&& pickedNode.conversations[i].eventDT <= toDate
+					) {
 					switch(pickedNode.conversations[i].messageType) {
 						case "EMAIL":
 							lIcon = 'fa-envelope-open-o';
@@ -553,6 +574,39 @@ $(document).ready(function(){
 			}
 		});
 	}
+
+	$( "#datepickerFrom" ).datepicker({
+		showButtonPanel: true,
+		dateFormat: "yy.mm.dd."
+	});
+
+	$( "#datepickerFrom" ).on("change", function() {
+
+//		myLog('fromDate: ' + fromDate.toISOString());
+		fromDate = new Date($(this).val().slice(0,10).replace(/\./g,"-"));
+		if (fromDate > toDate) {
+			toDate = fromDate;
+			$("#datepickerTo" ).val(toDate.toISOString().slice(0,10).replace(/-/g,".")+".");
+		}
+		filterChnage();
+//		myLog('fromDate: ' + fromDate.toISOString());
+//		myLog('datepickerFrom: ' + $(this).val().slice(0,10).replace(/\./g,"-") );
+	});
+
+
+	 $( "#datepickerTo" ).datepicker({
+		showButtonPanel: true,
+		dateFormat: "yy-mm-dd"
+	});
+	$( "#datepickerTo" ).on("change", function() {
+//		myLog('datepickerTo: ' + $(this).val() );
+		toDate = new Date($(this).val().slice(0,10).replace(/\./g,"-"));
+		if (fromDate > toDate) {
+			fromDate = toDate;
+			$("#datepickerFrom" ).val(fromDate.toISOString().slice(0,10).replace(/-/g,".")+".");
+		}
+		filterChnage();
+	});
 
 	// debug 
 	function myLog(logText){

@@ -7,6 +7,7 @@ $(document).ready(function(){
 	let network;
 	let fromDate = new Date();
 	let toDate = new Date(1970, 0, 0);	
+	let bLink = false;
 	let bProject = true;
 	let bAllocated = false;
 	let bCall = true;
@@ -25,11 +26,26 @@ $(document).ready(function(){
 	let nodesDSall = new vis.DataSet();
 	let nodesDSVfiltered = new vis.DataView(nodesDSall, {
 		filter: function (node) {
-			if (bProject) {
-				return (true)
-			} else {
-				return (node.group !== 'PROJECT')
+			var bHasLink = false;
+			var bIsProject = true;
+
+			if (!bProject && node.group == 'PROJECT') {
+				bIsProject = false;
 			}
+
+			if (bLink /*&& node.group == 'EMPLOYER'*/) {
+				if (node.conversations.length > 0) {
+					for (i in node.conversations ) {
+						if (edgesDSall.get(node.conversations[i].edgeId).width > 0){
+							bHasLink = true;
+						}
+					}
+				}	
+			} else {
+				bHasLink = true;
+			}
+
+			return bIsProject && bHasLink;
 		}
 	});
 	let edgesDSall = new vis.DataSet();
@@ -138,6 +154,16 @@ $(document).ready(function(){
 		nodesDSVfiltered.refresh();
 	});	
 
+	$( "#nav-link" ).click(function() {
+		if (bLink) {
+			$("#nav-link-icon-filter").css('color', 'grey'); //#53BAF2
+		} else{
+			$("#nav-link-icon-filter").css('color', '#007bff');
+		};
+		bLink = !bLink;
+		nodesDSVfiltered.refresh();
+	});	
+
 	$( "#nav-allocated" ).click(function() {
 		if (bAllocated) {
 			$("#nav-allocated-icon-filter").css('color', '#007bff'); //#53BAF2
@@ -229,6 +255,7 @@ $(document).ready(function(){
 		if (bRank5) { edgeFilter.push('RANK-5'); }
 
 		edgeIds.forEach(setEdgeProperies);
+		nodesDSVfiltered.refresh();
 		
 		if (edgeFilter.length > 0) {
 			clearObjectlist();
@@ -407,8 +434,8 @@ $(document).ready(function(){
 							edgesDSall.add({id: lId, from: fromNode, to: toNode, type: 'CONVERSATION', count: 1, width: 1, arrows: 'to', color: { color: '#660000'}, conversations: [{rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(toNode).label, hint: hint}] });
 							edgeIds.push(lId);
 						}
-						nodesDSall.get(fromNode).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(toNode).label, hint: hint});
-						nodesDSall.get(toNode).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(fromNode).label, hint: hint});
+						nodesDSall.get(fromNode).conversations.push({edgeId: lId, rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(toNode).label, hint: hint});
+						nodesDSall.get(toNode).conversations.push({edgeId: lId, rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(fromNode).label, hint: hint});
 					}
 				}
 				

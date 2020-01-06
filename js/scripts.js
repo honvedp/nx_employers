@@ -78,12 +78,7 @@ $(document).ready(function(){
     };
 	
     // create a network
-//	$("#mynetwork").height($(document).height()-95);
-	if($(document).height() > 800 ) {
-		$("#mynetwork").height($(document).height() - $(document).height()/4);
-	} else {
-		$("#mynetwork").height($(document).height() - 200);
-	}
+	$("#mynetwork").height($(document).height()-95);
     let container = document.getElementById('mynetwork');
 	
 //	p paraméter lekérése	
@@ -265,7 +260,11 @@ $(document).ready(function(){
 	}	
 
 	
-	$('#test1').click(function(e){
+	$('#Teszt1').click(function(e){
+		myLog("Teszt1 button is clicked");
+		$('#myModal').modal();					
+	 });	
+	 $('#test1').click(function(e){
 		myLog("test1 button is clicked");
      });
 	$('#test2').click(function(e){
@@ -565,39 +564,49 @@ $(document).ready(function(){
 			});
 
 			if (message.length == 1) {
-				$('#mailRank').css('color', getColorByRank(parseInt(messageRank)));
-				$('#mailRank').attr("class","fa fa-circle-o nav-icon");
-
-				document.getElementById("mailSubject").innerHTML = '&nbsp;' + message[0].subject;
+				// $('#mailRank').css('color', getColorByRank(parseInt(messageRank)));
+				// $('#mailRank').attr("class","fa fa-circle-o nav-icon");
+				$('#modalRank').css('color', getColorByRank(parseInt(messageRank)));
+				$('#modalRank').attr("class","fa fa-circle-o nav-icon");
+				
+				
+				document.getElementById("modalDate").innerHTML = message[0].submitTime;
+				// document.getElementById("mailSubject").innerHTML = '&nbsp;' + message[0].subject;
+				document.getElementById("modalLabel").innerHTML = message[0].subject;
+				
 				if (message[0].fromName) {
-					document.getElementById("mailFrom").innerHTML = 'From: ' + message[0].fromName + ' (' + message[0].fromAddress + ')';
+					// document.getElementById("mailFrom").innerHTML = 'From: ' + message[0].fromName + ' (' + message[0].fromAddress + ')';
+					document.getElementById("modalFrom").innerHTML = 'From: ' + message[0].fromName + ' (' + message[0].fromAddress + ')';
 				} else {
-					document.getElementById("mailFrom").innerHTML = 'From: ' + message[0].fromAddress;
+					// document.getElementById("mailFrom").innerHTML = 'From: ' + message[0].fromAddress;
+					document.getElementById("modalFrom").innerHTML = 'From: ' + message[0].fromAddress;
 				}
 				if (message[0].toName) {
-					document.getElementById("mailTo").innerHTML = 'To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + message[0].toName + '<span class="mailbox-read-time pull-right">' + message[0].submitTime + '</span>';
+					// document.getElementById("mailTo").innerHTML = 'To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + message[0].toName + '<span class="mailbox-read-time pull-right">' + message[0].submitTime + '</span>';
+					document.getElementById("modalTo").innerHTML = 'To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + message[0].toName;
 				}
-				document.getElementById("mailSubject").innerHTML = '&nbsp;' + message[0].subject;
+//				document.getElementById("mailSubject").innerHTML = '&nbsp;' + message[0].subject;
 				
-				document.getElementById("mailBody").innerHTML = message[0].body;
+//				document.getElementById("mailBody").innerHTML = message[0].body;
+				document.getElementById("modalBody").innerHTML = message[0].body;
 
-				$("#mailRank").show();
-				$("#mailSubject").show();
-				$("#mailFrom").show();
-				$("#mailTo").show();
-				$("#mailBody").show();
+				// $("#mailRank").show();
+				// $("#mailSubject").show();
+				// $("#mailFrom").show();
+				// $("#mailTo").show();
+				// $("#mailBody").show();
 			} else {
-				$('#mailRank').css('color', 'blue');
+				// $('#mailRank').css('color', 'blue');
 //				document.getElementById("mailSubject").innerHTML = '&nbsp;';
 //				document.getElementById("mailFrom").innerHTML = 'From:';
 //				document.getElementById("mailTo").innerHTML = 'To:';
 //				document.getElementById("mailBody").innerHTML = '&nbsp;';
 
-				$("#mailRank").hide();
-				$("#mailSubject").hide();
-				$("#mailFrom").hide();
-				$("#mailTo").hide();
-				$("#mailBody").hide();
+				// $("#mailRank").hide();
+				// $("#mailSubject").hide();
+				// $("#mailFrom").hide();
+				// $("#mailTo").hide();
+				// $("#mailBody").hide();
 			}
 		});
 	}

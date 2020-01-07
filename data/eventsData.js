@@ -252,7 +252,7 @@ var allocationsD = [
 						{projectCode: 'MT_APPDEV_MYTS_ONLINE_AUTHORIZED', projectName: 'MT APPDEV MYTS 14637 TSM Online Authorized Telekom Business Admin', userId: 'en_45', fromDT: '2019-01-28T00:00:00Z', toDT: '2019-05-31T00:00:00Z', allocPercent: 0},
 						{projectCode: 'TMX_REBORN_PHASE1', projectName: 'TMX REBORN Phase 1', userId: 'en_180', fromDT: '2019-01-28T00:00:00Z', toDT: '2019-05-31T00:00:00Z', allocPercent: 0},
 						{projectCode: 'BORT_BI_PARTNER_RIPORT', projectName: 'Bortársaság BI - Partner riport', userId: 'en_174', fromDT: '2019-03-01T00:00:00Z', toDT: '2019-06-28T00:00:00Z', allocPercent: 0},
-						{projectCode: 'MT_DWH_DEV_SUP_TM_2019', projectName: 'MT Adattárház fejlesztés és üzemeltetés T&M 2019', userId: 'en_214', fromDT: '2019-01-02T00:00:00Z', toDT: '2019-12-31T00:00:00Z', allocPercent: 100},
+						{projectCode: 'MT_DWH_DEV_SUP_TM_2019', projectName: 'MT Adattárház fejlesztés és üzemeltetés T&M 2019', userId: 'en_214', fromDT: '2019-01-02T00:00:00Z', toDT: '2019-06-30T00:00:00Z', allocPercent: 100},
 						{projectCode: 'EB_ERSTE_BAU_2019', projectName: 'REPGA kis volumenű fejlesztések - CAPEX 2019', userId: 'en_63', fromDT: '2019-01-02T00:00:00Z', toDT: '2019-02-28T00:00:00Z', allocPercent: 0},
 						{projectCode: 'EB_ERSTE_LTP_OBA_KBB', projectName: 'ERSTE LTP OBA KBB jelentés ', userId: 'en_74', fromDT: '2019-01-02T00:00:00Z', toDT: '2019-02-28T00:00:00Z', allocPercent: 10},
 						{projectCode: 'EB_ERSTE_REPGASUP2019', projectName: 'Repga rendszer support szolgáltatások és maintenance 2019', userId: 'en_110', fromDT: '2019-01-02T00:00:00Z', toDT: '2019-06-28T00:00:00Z', allocPercent: 0},

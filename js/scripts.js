@@ -59,10 +59,10 @@ $(document).ready(function(){
 					return (edge.width > 0);
 					break;
 				case "PROJECT":
-					if (bAllocated) {
+					if (bAllocated && edge.width > 0) {
 						return true;
 					} else {
-						return (edge.allocPercent > 0);
+						return ((edge.allocPercent > 0) && (edge.width > 0));
 					}
 					break;
 				default:
@@ -395,28 +395,23 @@ $(document).ready(function(){
 								   };
 						nodeIds.push(lId, 'PROJECT');
 						nodesDSall.add(actNode);
-					
 					}
-
-						
 					fromNode = nodesDSall.get('pn_' + allocationsD[i].projectCode);
 					toNode = nodesDSall.get(allocationsD[i].userId);
 					if (fromNode != null && toNode != null){
 						lId = fromNode.id + ' -> ' + toNode.id;
 
 						if ( edgeIds.indexOf( lId) >= 0) {
-							edgesDSall.update([{id: lId, width: edgesDSall.get(lId).width + 1 }]);
+//							edgesDSall.update([{id: lId, width: edgesDSall.get(lId).width + 1 }]);
+							edgesDSall.get(lId).allocations.push({fromDT: allocationFrom, toDT: allocationTo});
 						} else {
-							edgesDSall.add({id: lId, from: fromNode.id, to: toNode.id, type: 'PROJECT', width: 1, conversations: [], allocPercent: allocationsD[i].allocPercent});
+							edgesDSall.add({id: lId, from: fromNode.id, to: toNode.id, type: 'PROJECT', width: 1, allocations: [{fromDT: allocationFrom, toDT: allocationTo}], allocPercent: allocationsD[i].allocPercent});
 							edgeIds.push(lId);
 						}
 					}
-					
 				}
 				
 				for (i in conversationsD ) {
-					
-					
 					fromNode = conversationsD[i].userIdFrom;
 					toNode = conversationsD[i].userIdTo;
 
@@ -427,8 +422,6 @@ $(document).ready(function(){
 						hint = nodesDSall.get(fromNode).label + ' -> ' + nodesDSall.get(toNode).label;
 						if ( iEdge >= 0) {
 							edgesDSall.get(lId).conversations.push({rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(toNode).label, hint: hint});
-
-
 						} else {
 							edgesDSall.add({id: lId, from: fromNode, to: toNode, type: 'CONVERSATION', count: 1, width: 1, arrows: 'to', color: { color: '#660000'}, conversations: [{rank: conversationsD[i].rank, messageType: conversationsD[i].messageType, messageID: conversationsD[i].messageID, eventDT: eventDT, partnerName: nodesDSall.get(toNode).label, hint: hint}] });
 							edgeIds.push(lId);
@@ -450,6 +443,9 @@ $(document).ready(function(){
 			AVGRank = Math.round(filteredConversations.reduce(getSumRank, 0) / filteredConversations.length);
 
 			edgesDSall.update([{id: value, width: filteredConversations.length, color: { color: getColorByRank(AVGRank)}}]);
+		} else { // PROJECT
+			var filteredAllocations = actEdge.allocations.filter(allocationFilter);
+			edgesDSall.update([{id: value, width: filteredAllocations.length}]);
 		}
 	}
 
@@ -460,6 +456,15 @@ $(document).ready(function(){
 			&& conversation.eventDT <= toDate;
 	}
 
+	function allocationFilter(allocation, index, array) {
+		return ((allocation.fromDT <= fromDate && allocation.toDT >= fromDate) ||  		
+				(allocation.fromDT >= fromDate && allocation.toDT <= toDate) ||		
+				(allocation.fromDT >= fromDate && allocation.toDT >= toDate) 		
+				// Ádám: en_214
+				// fromDT: '2019-01-02T00:00:00Z'
+				// toDT:   '2019-06-30T00:00:00Z'
+		);
+	}
 
 	function getSumRank(total, conversation) {
 		return total + conversation.rank;

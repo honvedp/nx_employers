@@ -530,7 +530,7 @@ $(document).ready(function(){
 					}
 		
 					rIcon = '<i id="nav-un-icon" class="fa ' + lIcon + ' nav-icon" style="color: ' + getColorByRank(pickedNode.conversations[i].rank) + ';"></i>';
-					$("#Objektumlista").append('<li id="' + pickedNode.conversations[i].messageID + '" rank="' + pickedNode.conversations[i].rank + '" class="nav-item nav-obj-el"> <a href="#" class="nav-link" title="' + pickedNode.conversations[i].hint + '">' + rIcon + ' <p id="callout-link">' + pickedNode.conversations[i].eventDT.toISOString().slice(0,10) + ' ' + pickedNode.conversations[i].partnerName + '</p> </a> </li>');
+					$("#Objektumlista").append('<li id="' + pickedNode.conversations[i].messageID + '" messageType="' + pickedNode.conversations[i].messageType + '" rank="' + pickedNode.conversations[i].rank + '" class="nav-item nav-obj-el"> <a href="#" class="nav-link" title="' + pickedNode.conversations[i].hint + '">' + rIcon + ' <p id="callout-link">' + pickedNode.conversations[i].eventDT.toISOString().slice(0,10) + ' ' + pickedNode.conversations[i].partnerName + '</p> </a> </li>');
 				}
 			}
 		}
@@ -550,7 +550,7 @@ $(document).ready(function(){
 					}
 		
 					rIcon = '<i id="nav-un-icon" class="fa ' + lIcon + ' nav-icon" style="color: ' + getColorByRank(pickedEdge.conversations[i].rank) + ';"></i>';
-					$("#Objektumlista").append('<li id="' + pickedEdge.conversations[i].messageID + '" rank="' + pickedEdge.conversations[i].rank + '" class="nav-item nav-obj-el"> <a href="#" class="nav-link" title="' + pickedEdge.conversations[i].hint + '">' + rIcon + ' <p id="callout-link">' + pickedEdge.conversations[i].eventDT.toISOString().slice(0,10) + ' ' + pickedEdge.conversations[i].partnerName + '</p> </a> </li>');
+					$("#Objektumlista").append('<li id="' + pickedEdge.conversations[i].messageID + '" messageType="' + pickedEdge.conversations[i].messageType + '" rank="' + pickedEdge.conversations[i].rank + '" class="nav-item nav-obj-el"> <a href="#" class="nav-link" title="' + pickedEdge.conversations[i].hint + '">' + rIcon + ' <p id="callout-link">' + pickedEdge.conversations[i].eventDT.toISOString().slice(0,10) + ' ' + pickedEdge.conversations[i].partnerName + '</p> </a> </li>');
 				}
 			}
 		}
@@ -559,38 +559,44 @@ $(document).ready(function(){
 		$('#Objektumlista').on('click','.nav-obj-el',function(e, myName, myValue) {
 			const messageID = this.id;
 			const messageRank = $("#" + messageID).attr("rank")
-			var message = messagesD.filter(function(value) {
-				return value.messageID == messageID;
-			});
+			const messagetype = $("#" + messageID).attr("messagetype")
+			myLog('messageID: ' + messageID + 'messagetype: ' + messagetype);
 
-			if (message.length == 1) {
-				$('#modalRank').css('color', getColorByRank(parseInt(messageRank)));
-				$('#modalRank').attr("class","fa fa-envelope-open-o nav-icon");
-				
-				document.getElementById("modalDate").innerHTML = message[0].submitTime;
-				document.getElementById("modalLabel").innerHTML = message[0].subject;
-				
-				if (message[0].fromName) {
-					document.getElementById("modalFrom").innerHTML = 'From: ' + message[0].fromName + ' (' + message[0].fromAddress + ')';
+			if (messagetype == "EMAIL"){
+				var message = messagesD.filter(function(value) {
+					return value.messageID == messageID;
+				});
+	
+				if (message.length == 1) {
+					$('#modalRank').css('color', getColorByRank(parseInt(messageRank)));
+					$('#modalRank').attr("class","fa fa-envelope-open-o nav-icon");
+					
+					document.getElementById("modalDate").innerHTML = message[0].submitTime;
+					document.getElementById("modalLabel").innerHTML = message[0].subject;
+					
+					if (message[0].fromName) {
+						document.getElementById("modalFrom").innerHTML = 'From: ' + message[0].fromName + ' (' + message[0].fromAddress + ')';
+					} else {
+						document.getElementById("modalFrom").innerHTML = 'From: ' + message[0].fromAddress;
+					}
+					if (message[0].toName) {
+						document.getElementById("modalTo").innerHTML = 'To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + message[0].toName;
+					}
+					document.getElementById("modalBody").innerHTML = message[0].body;
 				} else {
-					document.getElementById("modalFrom").innerHTML = 'From: ' + message[0].fromAddress;
+					$('#modalRank').css('color', 'blue');
+					$('#modalRank').attr("class","fa fa-question nav-icon");
+	
+					document.getElementById("modalDate").innerHTML = '&nbsp;';
+					document.getElementById("modalLabel").innerHTML = 'Ismeretlen levél';
+					document.getElementById("modalFrom").innerHTML = 'From:';
+					document.getElementById("modalTo").innerHTML = 'To:';
+					document.getElementById("modalBody").innerHTML = '&nbsp;';
 				}
-				if (message[0].toName) {
-					document.getElementById("modalTo").innerHTML = 'To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + message[0].toName;
-				}
-				document.getElementById("modalBody").innerHTML = message[0].body;
+				$('#myModal').modal();					
 			} else {
-				$('#modalRank').css('color', 'blue');
-				$('#modalRank').attr("class","fa fa-question nav-icon");
-
-				document.getElementById("modalDate").innerHTML = '&nbsp;';
-				document.getElementById("modalLabel").innerHTML = 'Ismeretlen levél';
-				document.getElementById("modalFrom").innerHTML = 'From:';
-				document.getElementById("modalTo").innerHTML = 'To:';
-				document.getElementById("modalBody").innerHTML = '&nbsp;';
+				$('#myModal').modal('hide');
 			}
-			$('#myModal').modal();					
-
 		});
 	}
 
